@@ -11,5 +11,10 @@
       "src": "/(.*)",
       "dest": "api/index.py"
     }
-  ]
+  ],
+  "env": {
+    "DEEPSEEK_API_KEY": "sk-ecb5ee3f054d4e30a7ef0d3bf92eaf3b",
+    "HOST": "0.0.0.0",
+    "PORT": "8080"
+  }
 }

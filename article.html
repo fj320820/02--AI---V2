@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>出师表学习空间 V2.0｜墨香国学AI</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ===== 出师表学习空间 V2.0 专属样式（仅作用于本页） ===== */
+    .cs-hero{
+      position:relative;
+      padding: clamp(28px,4vw,46px);
+      border:1px solid var(--rule);
+      border-radius:36px;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(216,181,108,.22), transparent 22rem),
+        radial-gradient(circle at 90% 100%, rgba(143,29,36,.28), transparent 24rem),
+        linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.035));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .cs-hero::before{
+      content:"出";
+      position:absolute;
+      right:-28px; bottom:-100px;
+      font-size:clamp(12rem,28vw,22rem);
+      font-weight:900;
+      line-height:1;
+      color:rgba(216,181,108,.07);
+      pointer-events:none;
+    }
+    .cs-eyebrow{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 12px; border:1px solid var(--rule); border-radius:999px;
+      color:var(--cyan); background:var(--cyan-soft);
+      font-size:.82rem; margin-bottom:18px;
+    }
+    .cs-eyebrow::before{
+      content:""; width:7px; height:7px; border-radius:50%;
+      background:var(--cyan); box-shadow:0 0 14px var(--cyan);
+    }
+    .cs-title{
+      margin:0 0 12px;
+      color:var(--gold);
+      font-size:clamp(2.4rem,6vw,4.6rem);
+      letter-spacing:-.05em; line-height:1.05;
+    }
+    .cs-sub{
+      margin:0 0 16px; color:var(--ink);
+      font-size:clamp(1.05rem,2vw,1.4rem); letter-spacing:-.02em;
+    }
+    .cs-lead{ color:var(--muted); max-width:60em; margin:0; }
+    .cs-meta{
+      display:flex; flex-wrap:wrap; gap:10px; margin-top:18px;
+    }
+    .cs-meta span{
+      border:1px solid var(--rule); border-radius:999px;
+      padding:7px 12px; color:var(--muted);
+      background:rgba(255,255,255,.06); font-size:.85rem;
+    }
+    .cs-controls{
+      display:flex; flex-wrap:wrap; gap:10px; margin-top:22px;
+    }
+
+    /* 阅读进度条 */
+    .cs-progress{
+      position:sticky; top:78px; z-index:15;
+      margin:18px 0 14px;
+      height:6px; border-radius:999px;
+      background:rgba(255,255,255,.08);
+      overflow:hidden;
+      border:1px solid var(--rule);
+    }
+    .cs-progress i{
+      display:block; height:100%; width:0%;
+      background:linear-gradient(90deg, var(--gold), var(--cyan));
+      transition:width .25s ease;
+    }
+
+    /* 章节布局：左侧目录 + 右侧书卷 */
+    .cs-layout{
+      display:grid;
+      grid-template-columns: 260px minmax(0,1fr);
+      gap:20px;
+      align-items:start;
+      margin-top:22px;
+    }
+    .cs-toc{
+      position:sticky; top:138px;
+      border:1px solid var(--rule); border-radius:24px;
+      background:
+        radial-gradient(circle at 0 0, rgba(216,181,108,.16), transparent 16rem),
+        var(--card);
+      padding:16px;
+    }
+    .cs-toc h3{
+      margin:0 0 10px; color:var(--gold);
+      font-size:.92rem; letter-spacing:.06em;
+    }
+    .cs-toc ol{
+      list-style:none; padding:0; margin:0; counter-reset: ch;
+      display:grid; gap:6px;
+    }
+    .cs-toc li{ counter-increment: ch; }
+    .cs-toc a{
+      display:flex; align-items:baseline; gap:10px;
+      padding:9px 12px; border-radius:14px;
+      color:var(--muted); font-size:.92rem;
+      border:1px solid transparent;
+      transition:.2s ease;
+    }
+    .cs-toc a::before{
+      content: "第" counter(ch,cjk-ideographic) "章";
+      flex:0 0 auto;
+      font-size:.74rem; color:var(--cyan);
+      padding:2px 7px; border-radius:999px;
+      background:var(--cyan-soft);
+      border:1px solid rgba(126,228,211,.25);
+    }
+    .cs-toc a:hover{
+      color:var(--ink);
+      background:rgba(255,255,255,.06);
+      border-color:var(--rule);
+    }
+    .cs-toc a.active{
+      color:var(--ink);
+      background:rgba(216,181,108,.14);
+      border-color:rgba(216,181,108,.45);
+    }
+    .cs-toc-actions{
+      display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;
+    }
+    .cs-toc-actions button{
+      flex:1 1 auto;
+      appearance:none; cursor:pointer;
+      border:1px solid var(--rule); border-radius:999px;
+      padding:8px 10px; font-size:.78rem;
+      color:var(--muted); background:rgba(255,255,255,.05);
+      transition:.2s ease;
+    }
+    .cs-toc-actions button:hover{
+      color:var(--ink); border-color:rgba(216,181,108,.45);
+    }
+
+    /* 书卷舞台 */
+    .cs-scroll-stage{
+      position:relative;
+      padding:14px 0;
+    }
+    /* 顶部、底部书卷轴 */
+    .cs-scroll-rod{
+      position:relative;
+      height:22px;
+      margin: 0 -6px 14px;
+      border-radius:999px;
+      background:
+        linear-gradient(90deg,
+          #2a1a0c 0%, #6b4a23 8%,
+          #d8b56c 22%, #f0d58e 40%,
+          #d8b56c 60%, #6b4a23 92%, #2a1a0c 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.25),
+        inset 0 -2px 4px rgba(0,0,0,.45),
+        0 12px 30px rgba(0,0,0,.32);
+    }
+    .cs-scroll-rod::before,
+    .cs-scroll-rod::after{
+      content:""; position:absolute; top:50%; transform:translateY(-50%);
+      width:36px; height:34px; border-radius:50%;
+      background: radial-gradient(circle at 35% 30%, #f6dfa0, #8a5a13 70%, #1c0e04);
+      box-shadow: 0 6px 16px rgba(0,0,0,.4);
+    }
+    .cs-scroll-rod::before{ left:-10px; }
+    .cs-scroll-rod::after{ right:-10px; }
+    .cs-scroll-rod.bottom{ margin: 14px -6px 0; }
+
+    /* 章节卡片 */
+    .cs-chapter{
+      position:relative;
+      margin-bottom:18px;
+      border:1px solid rgba(112, 82, 40, 0.32);
+      border-radius:22px;
+      background:
+        radial-gradient(circle at 0 0, rgba(216,181,108,.18), transparent 22rem),
+        linear-gradient(180deg, rgba(246,234,211,.97), rgba(238,222,190,.94));
+      color:var(--paper-ink);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.32), 0 18px 50px rgba(0,0,0,.22);
+      overflow:hidden;
+      scroll-margin-top: 156px;
+    }
+    /* 内边竖纹（书卷感） */
+    .cs-chapter::before{
+      content:"";
+      position:absolute; inset:0;
+      pointer-events:none;
+      background:
+        repeating-linear-gradient(90deg,
+          rgba(138,90,19,.06) 0 1px,
+          transparent 1px 38px);
+      opacity:.55;
+    }
+    .cs-chapter > *{ position:relative; z-index:1; }
+
+    .cs-chapter-head{
+      display:flex; align-items:center; gap:14px;
+      padding:18px 22px;
+      cursor:pointer;
+      list-style:none;
+      border-bottom:1px solid rgba(138,90,19,.18);
+      background:
+        linear-gradient(90deg, rgba(216,181,108,.18), transparent 60%);
+    }
+    .cs-chapter-head::-webkit-details-marker{ display:none; }
+    .cs-seal{
+      width:46px; height:46px; flex:0 0 auto;
+      display:grid; place-items:center;
+      border-radius:12px;
+      color:#fff8e6; font-weight:900;
+      background: linear-gradient(135deg, #8f1d24, #5a0f15);
+      box-shadow: 0 4px 18px rgba(143,29,36,.45),
+                  inset 0 0 0 1px rgba(255,255,255,.22);
+      letter-spacing:.04em;
+      font-size:.78rem; line-height:1.1;
+      text-align:center;
+    }
+    .cs-chapter-titles{
+      display:flex; align-items:baseline; gap:10px;
+      flex-wrap:wrap; flex:1 1 auto; min-width:0;
+    }
+    .cs-chapter-no{
+      color:#8a5a13; font-weight:700;
+      font-size:.92rem; letter-spacing:.06em;
+    }
+    .cs-chapter-name{
+      margin:0; color:#5b1216;
+      font-size:clamp(1.3rem,2.4vw,1.7rem);
+      letter-spacing:-.02em;
+    }
+    .cs-chapter-tag{
+      color:#8a5a13; font-size:.82rem;
+      padding:3px 10px; border-radius:999px;
+      border:1px solid rgba(138,90,19,.32);
+      background:rgba(255,255,255,.42);
+    }
+    .cs-toggle{
+      flex:0 0 auto;
+      width:34px; height:34px; border-radius:50%;
+      display:grid; place-items:center;
+      border:1px solid rgba(138,90,19,.35);
+      color:#8a5a13;
+      background:rgba(255,255,255,.5);
+      transition:.25s ease;
+    }
+    .cs-chapter[open] .cs-toggle{ transform:rotate(180deg); background:rgba(216,181,108,.4); }
+
+    .cs-chapter-body{
+      padding: 22px;
+      display:grid; gap:14px;
+    }
+    .cs-block{
+      border:1px solid rgba(138,90,19,.22);
+      border-radius:16px;
+      padding:16px 18px;
+      background: rgba(255,250,235,.6);
+    }
+    .cs-block .cs-h{
+      display:flex; align-items:center; gap:8px;
+      margin:0 0 10px;
+      font-size:.92rem; letter-spacing:.06em;
+      color:#8a5a13;
+    }
+    .cs-block .cs-h::before{
+      content:""; width:6px; height:6px; border-radius:50%;
+      background:#8a5a13;
+      box-shadow:0 0 0 3px rgba(138,90,19,.15);
+    }
+    .cs-intro{
+      background:
+        linear-gradient(90deg, rgba(216,181,108,.22), transparent 75%),
+        rgba(255,250,235,.7);
+      border-style:dashed;
+    }
+    .cs-intro p{
+      margin:0; color:#3a2916; font-size:1.02rem; line-height:1.85;
+      font-style:italic;
+    }
+    .cs-original{
+      background:
+        repeating-linear-gradient(90deg,
+          rgba(138,90,19,.12) 0 1px, transparent 1px 32px),
+        rgba(255,250,235,.78);
+    }
+    .cs-original p{
+      margin:0; color:#2a1d10;
+      font-size:1.14rem; line-height:2.1; letter-spacing:.04em;
+      text-indent:2em;
+    }
+    .cs-translation p{
+      margin:0; color:#3d2c19; line-height:1.95;
+    }
+    .cs-notes ul{
+      list-style:none; padding:0; margin:0;
+      display:grid; gap:8px;
+    }
+    .cs-notes li{
+      padding:10px 12px;
+      border:1px solid rgba(138,90,19,.18);
+      border-radius:12px;
+      background:rgba(255,253,244,.7);
+      color:#3d2c19;
+      font-size:.95rem;
+    }
+    .cs-notes li b{ color:#8a1f25; margin-right:6px; }
+    .cs-bg p{ margin:0; color:#3d2c19; line-height:1.85; }
+    .cs-ai{
+      background:
+        linear-gradient(135deg, rgba(126,228,211,.14), rgba(255,255,255,0)),
+        rgba(255,250,235,.55);
+      border-color: rgba(46,140,128,.35);
+    }
+    .cs-ai .cs-h{ color:#1f6a5e; }
+    .cs-ai .cs-h::before{ background:#1f6a5e; box-shadow:0 0 0 3px rgba(31,106,94,.18); }
+    .cs-ai-q{ display:grid; gap:8px; }
+    .cs-ai-q button{
+      appearance:none; text-align:left; cursor:pointer;
+      border:1px solid rgba(31,106,94,.28); border-radius:14px;
+      padding:11px 14px;
+      color:#1f3a36; background:rgba(255,255,255,.55);
+      font-size:.95rem;
+      transition:.2s ease;
+    }
+    .cs-ai-q button:hover{
+      background: linear-gradient(135deg, rgba(126,228,211,.34), rgba(255,255,255,.6));
+      transform:translateY(-1px);
+      border-color:rgba(31,106,94,.5);
+    }
+    .cs-ai-tip{
+      margin-top:8px;
+      font-size:.82rem; color:#1f6a5e;
+    }
+    .cs-debate{
+      background:
+        linear-gradient(135deg, rgba(143,29,36,.10), rgba(255,255,255,0)),
+        rgba(255,250,235,.55);
+      border-color: rgba(143,29,36,.32);
+    }
+    .cs-debate .cs-h{ color:#7a161c; }
+    .cs-debate .cs-h::before{ background:#7a161c; box-shadow:0 0 0 3px rgba(143,29,36,.18); }
+    .cs-debate p.q{
+      margin:0 0 10px; color:#3d1216; font-weight:700;
+    }
+    .cs-debate-options{
+      display:grid; grid-template-columns:1fr 1fr; gap:10px;
+    }
+    .cs-debate-options button{
+      appearance:none; cursor:pointer;
+      text-align:left;
+      border:1px solid rgba(143,29,36,.28); border-radius:14px;
+      padding:12px 14px;
+      color:#3d1216; background:rgba(255,255,255,.55);
+      font-size:.95rem; line-height:1.55;
+      transition:.2s ease;
+    }
+    .cs-debate-options button:hover{
+      background:rgba(143,29,36,.10);
+      transform:translateY(-1px);
+      border-color:rgba(143,29,36,.5);
+    }
+    .cs-debate-options button.picked{
+      border-color:rgba(143,29,36,.65);
+      box-shadow: 0 0 0 1px rgba(143,29,36,.25), 0 14px 30px rgba(143,29,36,.16);
+      background:rgba(143,29,36,.14);
+    }
+    .cs-debate-result{
+      display:none; margin-top:12px;
+      padding:12px 14px; border-radius:14px;
+      border:1px dashed rgba(143,29,36,.35);
+      background:rgba(255,250,235,.85);
+      color:#3d1216; line-height:1.75;
+    }
+    .cs-debate-result.show{ display:block; animation:pop .25s ease both; }
+    .cs-debate-result b{ color:#7a161c; }
+
+    /* 金句字帖（深色风格保持，与字帖页一致） */
+    .cs-quote{
+      background:
+        linear-gradient(180deg, rgba(20,12,6,.92), rgba(20,12,6,.92)),
+        rgba(0,0,0,.4);
+      border-color: rgba(216,181,108,.45);
+      color:var(--ink);
+    }
+    .cs-quote .cs-h{ color:var(--gold); }
+    .cs-quote .cs-h::before{ background:var(--gold); box-shadow:0 0 0 3px rgba(216,181,108,.22); }
+    .cs-quote-text{
+      margin:0 0 10px; color:var(--gold-2);
+      font-size:1.05rem; letter-spacing:.04em;
+    }
+    .cs-quote-grid{
+      display:flex; flex-wrap:wrap; gap:8px;
+    }
+    .cs-quote-grid .char-box{
+      width:60px; height:60px; font-size:1.55rem;
+    }
+    .cs-quote-actions{
+      display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;
+    }
+    .cs-quote-actions .btn{ padding:9px 14px; font-size:.88rem; }
+
+    /* 全部展开 / 折叠时的细微动效 */
+    .cs-chapter[open] .cs-chapter-body{ animation:pop .28s ease both; }
+
+    /* 书卷尾跋 */
+    .cs-end{
+      margin: 6px 0 0;
+      text-align:center; color:var(--muted);
+      font-size:.9rem; letter-spacing:.1em;
+    }
+    .cs-end::before, .cs-end::after{
+      content:" · "; color:var(--gold);
+    }
+
+    @media (max-width: 960px){
+      .cs-layout{ grid-template-columns: 1fr; }
+      .cs-toc{ position:static; }
+      .cs-debate-options{ grid-template-columns:1fr; }
+      .cs-progress{ top:60px; }
+    }
+    @media (max-width: 720px){
+      .cs-chapter-head{ padding:14px 16px; }
+      .cs-chapter-body{ padding:16px; }
+      .cs-original p{ font-size:1.04rem; line-height:2; text-indent:1.5em; }
+      .cs-quote-grid .char-box{ width:48px; height:48px; font-size:1.25rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+
+<nav class="topbar">
+  <a class="brand" href="index.html" aria-label="返回首页">
+    <span class="brand-seal">墨</span>
+    <span>
+      <strong>墨香国学AI</strong>
+      <small>Demo V1.0</small>
+    </span>
+  </a>
+  <div class="nav-links" aria-label="主导航">
+    <a href="index.html">首页</a>
+    <a href="article.html" class="active">古文学习</a>
+    <a href="teacher.html">AI老师</a>
+    <a href="copybook.html">国风字帖</a>
+    <a href="thinking.html">思辨挑战</a>
+    <a href="chat.html">人物互动</a>
+  </div>
+</nav>
+<section class="growth-panel" aria-label="成长系统">
+  <div class="growth-title">
+    <span>成长系统</span>
+    <strong data-growth-rank>初入草庐</strong>
+  </div>
+  <div class="growth-bar">
+    <div class="growth-item">
+      <span>智慧值</span>
+      <strong data-growth="wisdom">0</strong>
+      <div class="growth-track"><i data-growth-bar="wisdom"></i></div>
+    </div>
+    <div class="growth-item">
+      <span>书法值</span>
+      <strong data-growth="calligraphy">0</strong>
+      <div class="growth-track"><i data-growth-bar="calligraphy"></i></div>
+    </div>
+    <div class="growth-item">
+      <span>思辨值</span>
+      <strong data-growth="thinking">0</strong>
+      <div class="growth-track"><i data-growth-bar="thinking"></i></div>
+    </div>
+  </div>
+</section>
+
+<main class="cs-hero">
+  <span class="cs-eyebrow">出师表学习空间 V2.0</span>
+  <h1 class="cs-title">出师表 · 七章共读</h1>
+  <p class="cs-sub">从危局存亡到北伐决心，跟随诸葛亮一篇千古奏章的呼吸</p>
+  <p class="cs-lead">
+    本学习空间将《出师表》拆为七章，每章固定包含八个学习模块：导语、原文、译文、注释、历史背景、AI 老师推荐问题、思辨挑战、金句字帖。
+    采用卡片式书卷布局，可逐章折叠展开，可顺势滚动通读，让一千八百年前的奏章像一卷徐徐展开的书简，重新落到当下少年的案头。
+  </p>
+  <div class="cs-meta">
+    <span>章节数 · 7</span>
+    <span>固定模块 · 8</span>
+    <span>风格 · 深色国风 · 电子书卷</span>
+    <span>状态 · 前端模拟数据</span>
+  </div>
+  <div class="cs-controls">
+    <button class="btn" type="button" onclick="csCompleteAll()">完成本卷学习 +20 智慧</button>
+    <a class="btn secondary" href="teacher.html">向 AI 老师提问</a>
+    <a class="btn secondary" href="copybook.html">前往国风字帖</a>
+  </div>
+</main>
+
+<div class="cs-progress" aria-label="阅读进度"><i id="csProgressBar"></i></div>
+
+<div class="cs-layout">
+
+  <aside class="cs-toc" aria-label="章节目录">
+    <h3>章节目录</h3>
+    <ol id="csToc">
+      <li><a href="#ch1" data-ch="1">危局存亡</a></li>
+      <li><a href="#ch2" data-ch="2">广开言路</a></li>
+      <li><a href="#ch3" data-ch="3">赏罚分明</a></li>
+      <li><a href="#ch4" data-ch="4">亲贤远佞</a></li>
+      <li><a href="#ch5" data-ch="5">躬耕南阳</a></li>
+      <li><a href="#ch6" data-ch="6">临危受命</a></li>
+      <li><a href="#ch7" data-ch="7">北伐决心</a></li>
+    </ol>
+    <div class="cs-toc-actions">
+      <button type="button" onclick="csToggleAll(true)">全部展开</button>
+      <button type="button" onclick="csToggleAll(false)">全部折叠</button>
+    </div>
+  </aside>
+
+  <section class="cs-scroll-stage" aria-label="出师表书卷">
+    <div class="cs-scroll-rod" aria-hidden="true"></div>
+
+    <!-- 第一章 危局存亡 -->
+    <details class="cs-chapter" id="ch1" open>
+      <summary class="cs-chapter-head">
+        <span class="cs-seal">第一<br>章</span>
+        <div class="cs-chapter-titles">
+          <span class="cs-chapter-no">第一章</span>
+          <h2 class="cs-chapter-name">危局存亡</h2>
+          <span class="cs-chapter-tag">开篇 · 时局</span>
+        </div>
+        <span class="cs-toggle" aria-hidden="true">⌄</span>
+      </summary>
+      <div class="cs-chapter-body">
+        <div class="cs-block cs-intro">
+          <h3 class="cs-h">导语</h3>
+          <p>蜀汉风雨飘摇之际，诸葛亮以一句"危急存亡之秋"，写下了一个王朝最沉重的开篇。读这一章，是站在烽火未息的关口，看一位丞相如何把家国的重量，平稳地放到笔墨之间。</p>
+        </div>
+        <div class="cs-block cs-original">
+          <h3 class="cs-h">原文</h3>
+          <p>先帝创业未半而中道崩殂，今天下三分，益州疲弊，此诚危急存亡之秋也。然侍卫之臣不懈于内，忠志之士忘身于外者，盖追先帝之殊遇，欲报之于陛下也。</p>
+        </div>
+        <div class="cs-block cs-translation">
+          <h3 class="cs-h">现代译文</h3>
+          <p>先帝开创大业还没有完成一半，就在中途去世了。如今天下分成三国，益州又疲弱困乏，这确实是国家生死存亡的关键时刻。然而宫中的侍卫大臣在朝廷内不敢懈怠，忠诚有志的将士在外面舍身忘死，是因为他们追念先帝特殊的恩遇，想要把这份恩情报答给陛下。</p>
+        </div>
+        <div class="cs-block cs-notes">
+          <h3 class="cs-h">重点词语注释</h3>
+          <ul>
+            <li><b>崩殂：</b>古代专指帝王去世。</li>
+            <li><b>秋：</b>这里不是季节，指"时候、时刻"。</li>
+            <li><b>疲弊：</b>疲乏、困苦，形容国力衰弱。</li>
+            <li><b>殊遇：</b>特别的礼遇与信任。</li>
+          </ul>
+        </div>
+        <div class="cs-block cs-bg">
+          <h3 class="cs-h">历史背景</h3>
+          <p>公元 223 年，刘备在白帝城托孤后离世，蜀汉版图最小、人口最少。此时魏国坐拥中原，吴国占据江东，蜀汉偏居一隅又屡经战损，"危急存亡之秋"绝非夸张，而是诸葛亮真实的时局判断。</p>
+        </div>
+        <div class="cs-block cs-ai">
+          <h3 class="cs-h">AI 老师推荐问题</h3>
+          <div class="cs-ai-q">
+            <button type="button" onclick="csAskTeacher('为什么诸葛亮一开篇就写"危急存亡之秋"？')">为什么诸葛亮一开篇就写"危急存亡之秋"？</button>
+            <button type="button" onclick="csAskTeacher('蜀汉当时到底有多弱？')">蜀汉当时到底有多弱？</button>
+            <button type="button" onclick="csAskTeacher('"忠志之士忘身于外"指的是哪些人？')">"忠志之士忘身于外"指的是哪些人？</button>
+          </div>
+          <p class="cs-ai-tip">点击问题将跳转到 AI 老师页继续对话（前端模拟）。</p>
+        </div>
+        <div class="cs-block cs-debate">
+          <h3 class="cs-h">思辨挑战</h3>
+          <p class="q">如果你是后主刘禅，听完这段开篇，你的第一反应应该是？</p>
+          <div class="cs-debate-options">
+            <button type="button" onclick="csDebate(this,'A',1)">A. 立刻召集群臣，商议如何稳定益州民生</button>
+            <button type="button" onclick="csDebate(this,'B',1)">B. 安慰丞相不必如此忧虑，自己自有分寸</button>
+          </div>
+          <div class="cs-debate-result" data-debate="1">
+            <b>AI 点评：</b>选 A 更接近诸葛亮的本意——他点出"危急"，是希望君主把目光落到具体治理上，而不是停留在情绪层面。选 B 看似宽慰，却恰恰是诸葛亮最担心的"妄自菲薄、忽视危局"。
+          </div>
+        </div>
+        <div class="cs-block cs-quote">
+          <h3 class="cs-h">金句字帖</h3>
+          <p class="cs-quote-text">"此诚危急存亡之秋也"</p>
+          <div class="cs-quote-grid">
+            <div class="char-box" data-char="此"><span>此</span></div>
+            <div class="char-box" data-char="诚"><span>诚</span></div>
+            <div class="char-box" data-char="危"><span>危</span></div>
+            <div class="char-box" data-char="急"><span>急</span></div>
+            <div class="char-box" data-char="存"><span>存</span></div>
+            <div class="char-box" data-char="亡"><span>亡</span></div>
+            <div class="char-box" data-char="之"><span>之</span></div>
+            <div class="char-box" data-char="秋"><span>秋</span></div>
+            <div class="char-box" data-char="也"><span>也</span></div>
+          </div>
+          <div class="cs-quote-actions">
+            <a class="btn" href="copybook.html">前往字帖临摹</a>
+            <button class="btn secondary" type="button" onclick="csCopyQuote('此诚危急存亡之秋也')">复制金句</button>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- 第二章 广开言路 -->
+    <details class="cs-chapter" id="ch2">
+      <summary class="cs-chapter-head">
+        <span class="cs-seal">第二<br>章</span>
+        <div class="cs-chapter-titles">
+          <span class="cs-chapter-no">第二章</span>
+          <h2 class="cs-chapter-name">广开言路</h2>
+          <span class="cs-chapter-tag">劝谏 · 听言</span>
+        </div>
+        <span class="cs-toggle" aria-hidden="true">⌄</span>
+      </summary>
+      <div class="cs-chapter-body">
+        <div class="cs-block cs-intro">
+          <h3 class="cs-h">导语</h3>
+          <p>一个少年帝王最容易犯的错，是只听顺耳的话。诸葛亮在这一章里，把"愿意听见不一样的声音"放在了治国的首位。</p>
+        </div>
+        <div class="cs-block cs-original">
+          <h3 class="cs-h">原文</h3>
+          <p>诚宜开张圣听，以光先帝遗德，恢弘志士之气，不宜妄自菲薄，引喻失义，以塞忠谏之路也。</p>
+        </div>
+        <div class="cs-block cs-translation">
+          <h3 class="cs-h">现代译文</h3>
+          <p>实在应当广泛听取意见，以发扬光大先帝留下的美德，振奋有志之士的勇气，不应妄自菲薄、援引不当的比喻，以致堵塞了忠言进谏的道路。</p>
+        </div>
+        <div class="cs-block cs-notes">
+          <h3 class="cs-h">重点词语注释</h3>
+          <ul>
+            <li><b>开张圣听：</b>扩大圣明的听闻，引申为广泛听取意见。</li>
+            <li><b>光：</b>动词，发扬光大。</li>
+            <li><b>妄自菲薄：</b>过分小看自己。</li>
+            <li><b>引喻失义：</b>说话引用比喻不恰当，失了道理。</li>
+          </ul>
+        </div>
+        <div class="cs-block cs-bg">
+          <h3 class="cs-h">历史背景</h3>
+          <p>后主刘禅性格温和但缺少主见。诸葛亮深知，治理蜀汉首要不是出兵，而是让朝堂保持"声音的多样性"——这是任何一个长期决策机制最基础、也最容易被忽视的部分。</p>
+        </div>
+        <div class="cs-block cs-ai">
+          <h3 class="cs-h">AI 老师推荐问题</h3>
+          <div class="cs-ai-q">
+            <button type="button" onclick="csAskTeacher('"开张圣听"对今天的我们意味着什么？')">"开张圣听"对今天的我们意味着什么？</button>
+            <button type="button" onclick="csAskTeacher('为什么"妄自菲薄"会堵塞忠谏？')">为什么"妄自菲薄"会堵塞忠谏？</button>
+            <button type="button" onclick="csAskTeacher('一个领导者要怎么判断意见的好坏？')">一个领导者要怎么判断意见的好坏？</button>
+          </div>
+        </div>
+        <div class="cs-block cs-debate">
+          <h3 class="cs-h">思辨挑战</h3>
+          <p class="q">班级讨论中，多数同学和你意见不同。你应该？</p>
+          <div class="cs-debate-options">
+            <button type="button" onclick="csDebate(this,'A',2)">A. 听完所有反对意见再决定，先不急着反驳</button>
+            <button type="button" onclick="csDebate(this,'B',2)">B. 坚持自己原本的判断，否则就显得没主见</button>
+          </div>
+          <div class="cs-debate-result" data-debate="2">
+            <b>AI 点评：</b>"开张圣听"的精神更接近 A——先把不同意见纳入信息池，再综合判断。坚持立场不等于排斥讨论，真正的"有主见"是建立在听过之后。
+          </div>
+        </div>
+        <div class="cs-block cs-quote">
+          <h3 class="cs-h">金句字帖</h3>
+          <p class="cs-quote-text">"诚宜开张圣听"</p>
+          <div class="cs-quote-grid">
+            <div class="char-box" data-char="诚"><span>诚</span></div>
+            <div class="char-box" data-char="宜"><span>宜</span></div>
+            <div class="char-box" data-char="开"><span>开</span></div>
+            <div class="char-box" data-char="张"><span>张</span></div>
+            <div class="char-box" data-char="圣"><span>圣</span></div>
+            <div class="char-box" data-char="听"><span>听</span></div>
+          </div>
+          <div class="cs-quote-actions">
+            <a class="btn" href="copybook.html">前往字帖临摹</a>
+            <button class="btn secondary" type="button" onclick="csCopyQuote('诚宜开张圣听')">复制金句</button>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- 第三章 赏罚分明 -->
+    <details class="cs-chapter" id="ch3">
+      <summary class="cs-chapter-head">
+        <span class="cs-seal">第三<br>章</span>
+        <div class="cs-chapter-titles">
+          <span class="cs-chapter-no">第三章</span>
+          <h2 class="cs-chapter-name">赏罚分明</h2>
+          <span class="cs-chapter-tag">规则 · 公正</span>
+        </div>
+        <span class="cs-toggle" aria-hidden="true">⌄</span>
+      </summary>
+      <div class="cs-chapter-body">
+        <div class="cs-block cs-intro">
+          <h3 class="cs-h">导语</h3>
+          <p>没有规则的好心，常常成为最大的不公。诸葛亮在这里，给后主刘禅画了一条治国底线：宫中、府中，是同一把尺子。</p>
+        </div>
+        <div class="cs-block cs-original">
+          <h3 class="cs-h">原文</h3>
+          <p>宫中府中，俱为一体，陟罚臧否，不宜异同。若有作奸犯科及为忠善者，宜付有司论其刑赏，以昭陛下平明之理，不宜偏私，使内外异法也。</p>
+        </div>
+        <div class="cs-block cs-translation">
+          <h3 class="cs-h">现代译文</h3>
+          <p>皇宫与丞相府本是一个整体，奖善罚恶不应有任何不同。如果有为非作歹、违犯法令的人，以及忠诚善良的人，都应当交给主管的官员评定他们应受的处罚或奖赏，以彰显陛下公正严明的治理，绝不应当偏袒私心，让宫内宫外执行不同的法度。</p>
+        </div>
+        <div class="cs-block cs-notes">
+          <h3 class="cs-h">重点词语注释</h3>
+          <ul>
+            <li><b>陟罚臧否：</b>陟（提拔）、罚（惩戒）、臧否（评定善恶）。</li>
+            <li><b>有司：</b>主管的官员。</li>
+            <li><b>昭：</b>显示、彰明。</li>
+            <li><b>偏私：</b>偏袒私心。</li>
+          </ul>
+        </div>
+        <div class="cs-block cs-bg">
+          <h3 class="cs-h">历史背景</h3>
+          <p>刘禅身边宦官与外朝大臣常存矛盾，诸葛亮担心皇帝因亲近而徇私，让"宫中"和"府中"的尺度产生分裂——一旦法度不一，再忠诚的将士也会失望，再有能力的官员也会被劣币驱逐。</p>
+        </div>
+        <div class="cs-block cs-ai">
+          <h3 class="cs-h">AI 老师推荐问题</h3>
+          <div class="cs-ai-q">
+            <button type="button" onclick="csAskTeacher('"宫中府中俱为一体"为什么这么重要？')">"宫中府中俱为一体"为什么这么重要？</button>
+            <button type="button" onclick="csAskTeacher('赏罚分明和"人情味"冲突吗？')">赏罚分明和"人情味"冲突吗？</button>
+            <button type="button" onclick="csAskTeacher('校规和家规可以不一样吗？')">校规和家规可以不一样吗？</button>
+          </div>
+        </div>
+        <div class="cs-block cs-debate">
+          <h3 class="cs-h">思辨挑战</h3>
+          <p class="q">班委违纪，老师该怎么处理？</p>
+          <div class="cs-debate-options">
+            <button type="button" onclick="csDebate(this,'A',3)">A. 按校规一视同仁，公开处理</button>
+            <button type="button" onclick="csDebate(this,'B',3)">B. 因为是班委，工作辛苦，私下提醒一下即可</button>
+          </div>
+          <div class="cs-debate-result" data-debate="3">
+            <b>AI 点评：</b>诸葛亮反对的正是 B——身份不同、尺度不同，会让规则失效。A 更符合"陟罚臧否，不宜异同"的精神：公正不等于无情，而是给每个人同样的预期。
+          </div>
+        </div>
+        <div class="cs-block cs-quote">
+          <h3 class="cs-h">金句字帖</h3>
+          <p class="cs-quote-text">"陟罚臧否，不宜异同"</p>
+          <div class="cs-quote-grid">
+            <div class="char-box" data-char="陟"><span>陟</span></div>
+            <div class="char-box" data-char="罚"><span>罚</span></div>
+            <div class="char-box" data-char="臧"><span>臧</span></div>
+            <div class="char-box" data-char="否"><span>否</span></div>
+            <div class="char-box" data-char="不"><span>不</span></div>
+            <div class="char-box" data-char="宜"><span>宜</span></div>
+            <div class="char-box" data-char="异"><span>异</span></div>
+            <div class="char-box" data-char="同"><span>同</span></div>
+          </div>
+          <div class="cs-quote-actions">
+            <a class="btn" href="copybook.html">前往字帖临摹</a>
+            <button class="btn secondary" type="button" onclick="csCopyQuote('陟罚臧否，不宜异同')">复制金句</button>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- 第四章 亲贤远佞 -->
+    <details class="cs-chapter" id="ch4">
+      <summary class="cs-chapter-head">
+        <span class="cs-seal">第四<br>章</span>
+        <div class="cs-chapter-titles">
+          <span class="cs-chapter-no">第四章</span>
+          <h2 class="cs-chapter-name">亲贤远佞</h2>
+          <span class="cs-chapter-tag">用人 · 抉择</span>
+        </div>
+        <span class="cs-toggle" aria-hidden="true">⌄</span>
+      </summary>
+      <div class="cs-chapter-body">
+        <div class="cs-block cs-intro">
+          <h3 class="cs-h">导语</h3>
+          <p>每一个王朝兴衰的故事背后，都站着一群人。诸葛亮用先汉、后汉两段相反的命运，提醒少年帝王：和谁站在一起，比怎么努力更重要。</p>
+        </div>
+        <div class="cs-block cs-original">
+          <h3 class="cs-h">原文</h3>
+          <p>亲贤臣，远小人，此先汉所以兴隆也；亲小人，远贤臣，此后汉所以倾颓也。先帝在时，每与臣论此事，未尝不叹息痛恨于桓、灵也。</p>
+        </div>
+        <div class="cs-block cs-translation">
+          <h3 class="cs-h">现代译文</h3>
+          <p>亲近贤臣、疏远小人，这是西汉之所以兴盛的原因；亲近小人、疏远贤臣，这是东汉之所以衰败的原因。先帝在世时，每次和我谈论这些事情，没有不对桓帝、灵帝时期的腐败感到叹息和痛心遗憾的。</p>
+        </div>
+        <div class="cs-block cs-notes">
+          <h3 class="cs-h">重点词语注释</h3>
+          <ul>
+            <li><b>贤臣：</b>有德有才、能为国家担当的臣子。</li>
+            <li><b>小人：</b>这里指品德低下、只顾私利的人，不是身材矮小。</li>
+            <li><b>倾颓：</b>倒塌、衰败。</li>
+            <li><b>桓、灵：</b>东汉桓帝、灵帝，史上著名的昏君组合。</li>
+          </ul>
+        </div>
+        <div class="cs-block cs-bg">
+          <h3 class="cs-h">历史背景</h3>
+          <p>东汉末年宦官专权、党锢之祸频发，是士人阶层的集体记忆。刘备与诸葛亮都把那段历史视为反面教材，所以诸葛亮直接把"用什么人"摆到了奏章正中央。</p>
+        </div>
+        <div class="cs-block cs-ai">
+          <h3 class="cs-h">AI 老师推荐问题</h3>
+          <div class="cs-ai-q">
+            <button type="button" onclick="csAskTeacher('怎么区分"贤臣"和"小人"？')">怎么区分"贤臣"和"小人"？</button>
+            <button type="button" onclick="csAskTeacher('为什么诸葛亮要拿桓、灵作反例？')">为什么诸葛亮要拿桓、灵作反例？</button>
+            <button type="button" onclick="csAskTeacher('"亲贤远佞"在今天的同伴关系里怎么用？')">"亲贤远佞"在今天的同伴关系里怎么用？</button>
+          </div>
+        </div>
+        <div class="cs-block cs-debate">
+          <h3 class="cs-h">思辨挑战</h3>
+          <p class="q">交朋友时，你更看重哪一点？</p>
+          <div class="cs-debate-options">
+            <button type="button" onclick="csDebate(this,'A',4)">A. 一起开心，能玩到一起就行</button>
+            <button type="button" onclick="csDebate(this,'B',4)">B. 价值观和方向相近，能彼此变好</button>
+          </div>
+          <div class="cs-debate-result" data-debate="4">
+            <b>AI 点评：</b>"亲贤远佞"的当代解读更接近 B——朋友不是工具，但环境会塑造你。一起开心可以是结果，不必是唯一标准。
+          </div>
+        </div>
+        <div class="cs-block cs-quote">
+          <h3 class="cs-h">金句字帖</h3>
+          <p class="cs-quote-text">"亲贤臣，远小人"</p>
+          <div class="cs-quote-grid">
+            <div class="char-box" data-char="亲"><span>亲</span></div>
+            <div class="char-box" data-char="贤"><span>贤</span></div>
+            <div class="char-box" data-char="臣"><span>臣</span></div>
+            <div class="char-box" data-char="远"><span>远</span></div>
+            <div class="char-box" data-char="小"><span>小</span></div>
+            <div class="char-box" data-char="人"><span>人</span></div>
+          </div>
+          <div class="cs-quote-actions">
+            <a class="btn" href="copybook.html">前往字帖临摹</a>
+            <button class="btn secondary" type="button" onclick="csCopyQuote('亲贤臣，远小人')">复制金句</button>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- 第五章 躬耕南阳 -->
+    <details class="cs-chapter" id="ch5">
+      <summary class="cs-chapter-head">
+        <span class="cs-seal">第五<br>章</span>
+        <div class="cs-chapter-titles">
+          <span class="cs-chapter-no">第五章</span>
+          <h2 class="cs-chapter-name">躬耕南阳</h2>
+          <span class="cs-chapter-tag">出身 · 三顾</span>
+        </div>
+        <span class="cs-toggle" aria-hidden="true">⌄</span>
+      </summary>
+      <div class="cs-chapter-body">
+        <div class="cs-block cs-intro">
+          <h3 class="cs-h">导语</h3>
+          <p>这一段，是诸葛亮少有的"自述"。一位即将远征的丞相，把自己拉回到草庐里那个种田的青年，让全篇有了温度。</p>
+        </div>
+        <div class="cs-block cs-original">
+          <h3 class="cs-h">原文</h3>
+          <p>臣本布衣，躬耕于南阳，苟全性命于乱世，不求闻达于诸侯。先帝不以臣卑鄙，猥自枉屈，三顾臣于草庐之中，咨臣以当世之事，由是感激，遂许先帝以驱驰。</p>
+        </div>
+        <div class="cs-block cs-translation">
+          <h3 class="cs-h">现代译文</h3>
+          <p>我本是个平民百姓，亲自在南阳种地，只想在乱世中保全性命，并不希望在诸侯之间出名。先帝并不嫌弃我身份低微、见识短浅，反而降低身份委屈自己，三次到草庐中来拜访我，向我询问当时天下的大事。我因此深受感动，于是答应为先帝奔走效力。</p>
+        </div>
+        <div class="cs-block cs-notes">
+          <h3 class="cs-h">重点词语注释</h3>
+          <ul>
+            <li><b>布衣：</b>平民。古代百姓多穿粗布衣服。</li>
+            <li><b>苟全：</b>勉强保全。</li>
+            <li><b>闻达：</b>有名声、显达。</li>
+            <li><b>卑鄙：</b>古今异义，古代指身份低微、见识浅陋，不是品德差。</li>
+            <li><b>猥自枉屈：</b>降低身份、委屈自己。</li>
+            <li><b>驱驰：</b>奔走效力。</li>
+          </ul>
+        </div>
+        <div class="cs-block cs-bg">
+          <h3 class="cs-h">历史背景</h3>
+          <p>"三顾茅庐"发生在公元 207 年。年近半百的刘备三次造访 27 岁的诸葛亮，并在第三次见面后形成了著名的"隆中对"。这一段在二十一年后被诸葛亮重新提起，是为了告诉刘禅：他效忠的不是权位，而是先帝那份不计身份的尊重。</p>
+        </div>
+        <div class="cs-block cs-ai">
+          <h3 class="cs-h">AI 老师推荐问题</h3>
+          <div class="cs-ai-q">
+            <button type="button" onclick="csAskTeacher('"卑鄙"古今意思差别有多大？')">"卑鄙"古今意思差别有多大？</button>
+            <button type="button" onclick="csAskTeacher('"三顾茅庐"为什么被反复书写？')">"三顾茅庐"为什么被反复书写？</button>
+            <button type="button" onclick="csAskTeacher('"不求闻达"是消极避世吗？')">"不求闻达"是消极避世吗？</button>
+          </div>
+        </div>
+        <div class="cs-block cs-debate">
+          <h3 class="cs-h">思辨挑战</h3>
+          <p class="q">如果有人三次邀请你做一件超出你能力的事，你会？</p>
+          <div class="cs-debate-options">
+            <button type="button" onclick="csDebate(this,'A',5)">A. 婉拒，先把自己准备好再说</button>
+            <button type="button" onclick="csDebate(this,'B',5)">B. 接受，把信任当作重要的成长机会</button>
+          </div>
+          <div class="cs-debate-result" data-debate="5">
+            <b>AI 点评：</b>两种选择都不错。诸葛亮选择 B，是因为他在草庐时已经做了足够准备，"隆中对"不是临场发挥。换句话说：A 是在练，B 是在战，关键看你处于哪个阶段。
+          </div>
+        </div>
+        <div class="cs-block cs-quote">
+          <h3 class="cs-h">金句字帖</h3>
+          <p class="cs-quote-text">"三顾臣于草庐之中"</p>
+          <div class="cs-quote-grid">
+            <div class="char-box" data-char="三"><span>三</span></div>
+            <div class="char-box" data-char="顾"><span>顾</span></div>
+            <div class="char-box" data-char="臣"><span>臣</span></div>
+            <div class="char-box" data-char="于"><span>于</span></div>
+            <div class="char-box" data-char="草"><span>草</span></div>
+            <div class="char-box" data-char="庐"><span>庐</span></div>
+            <div class="char-box" data-char="之"><span>之</span></div>
+            <div class="char-box" data-char="中"><span>中</span></div>
+          </div>
+          <div class="cs-quote-actions">
+            <a class="btn" href="copybook.html">前往字帖临摹</a>
+            <button class="btn secondary" type="button" onclick="csCopyQuote('三顾臣于草庐之中')">复制金句</button>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- 第六章 临危受命 -->
+    <details class="cs-chapter" id="ch6">
+      <summary class="cs-chapter-head">
+        <span class="cs-seal">第六<br>章</span>
+        <div class="cs-chapter-titles">
+          <span class="cs-chapter-no">第六章</span>
+          <h2 class="cs-chapter-name">临危受命</h2>
+          <span class="cs-chapter-tag">担当 · 托孤</span>
+        </div>
+        <span class="cs-toggle" aria-hidden="true">⌄</span>
+      </summary>
+      <div class="cs-chapter-body">
+        <div class="cs-block cs-intro">
+          <h3 class="cs-h">导语</h3>
+          <p>从草庐到丞相，诸葛亮用一句话概括了自己二十一年的全部命运——并不是平步青云，而是"败军之际、危难之间"。</p>
+        </div>
+        <div class="cs-block cs-original">
+          <h3 class="cs-h">原文</h3>
+          <p>后值倾覆，受任于败军之际，奉命于危难之间，尔来二十有一年矣。</p>
+        </div>
+        <div class="cs-block cs-translation">
+          <h3 class="cs-h">现代译文</h3>
+          <p>后来遭逢失败覆灭，我在战败之际接受了重任，在危难关头领受了使命，从那时到现在已经有二十一年了。</p>
+        </div>
+        <div class="cs-block cs-notes">
+          <h3 class="cs-h">重点词语注释</h3>
+          <ul>
+            <li><b>倾覆：</b>形容大的失败、覆灭。</li>
+            <li><b>受任：</b>接受任命。</li>
+            <li><b>奉命：</b>遵奉使命。</li>
+            <li><b>尔来：</b>从那时以来。</li>
+          </ul>
+        </div>
+        <div class="cs-block cs-bg">
+          <h3 class="cs-h">历史背景</h3>
+          <p>从公元 207 年出山，到公元 227 年写下《出师表》，正好二十一年。这中间经历了赤壁之战、入主益州、夷陵惨败、白帝托孤——诸葛亮没有一次是在顺境里接过任务，他用一个"危"字串起了自己的政治生涯。</p>
+        </div>
+        <div class="cs-block cs-ai">
+          <h3 class="cs-h">AI 老师推荐问题</h3>
+          <div class="cs-ai-q">
+            <button type="button" onclick="csAskTeacher('为什么诸葛亮要算这"二十一年"？')">为什么诸葛亮要算这"二十一年"？</button>
+            <button type="button" onclick="csAskTeacher('"临危受命"对一个团队意味着什么？')">"临危受命"对一个团队意味着什么？</button>
+            <button type="button" onclick="csAskTeacher('普通人在生活中会遇到"临危受命"吗？')">普通人在生活中会遇到"临危受命"吗？</button>
+          </div>
+        </div>
+        <div class="cs-block cs-debate">
+          <h3 class="cs-h">思辨挑战</h3>
+          <p class="q">小组合作中，原组长突然请假，老师让你顶上。你会？</p>
+          <div class="cs-debate-options">
+            <button type="button" onclick="csDebate(this,'A',6)">A. 委婉拒绝，理由是没有准备</button>
+            <button type="button" onclick="csDebate(this,'B',6)">B. 接下任务，先稳住组员，再分工推进</button>
+          </div>
+          <div class="cs-debate-result" data-debate="6">
+            <b>AI 点评：</b>诸葛亮的态度更接近 B——"危难"恰恰是真正能锻炼能力的时机。但 B 不等于硬扛，先稳人、再分工，才是合格的"临危受命"。
+          </div>
+        </div>
+        <div class="cs-block cs-quote">
+          <h3 class="cs-h">金句字帖</h3>
+          <p class="cs-quote-text">"受任于败军之际，奉命于危难之间"</p>
+          <div class="cs-quote-grid">
+            <div class="char-box" data-char="受"><span>受</span></div>
+            <div class="char-box" data-char="任"><span>任</span></div>
+            <div class="char-box" data-char="于"><span>于</span></div>
+            <div class="char-box" data-char="败"><span>败</span></div>
+            <div class="char-box" data-char="军"><span>军</span></div>
+            <div class="char-box" data-char="之"><span>之</span></div>
+            <div class="char-box" data-char="际"><span>际</span></div>
+          </div>
+          <div class="cs-quote-actions">
+            <a class="btn" href="copybook.html">前往字帖临摹</a>
+            <button class="btn secondary" type="button" onclick="csCopyQuote('受任于败军之际，奉命于危难之间')">复制金句</button>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- 第七章 北伐决心 -->
+    <details class="cs-chapter" id="ch7">
+      <summary class="cs-chapter-head">
+        <span class="cs-seal">第七<br>章</span>
+        <div class="cs-chapter-titles">
+          <span class="cs-chapter-no">第七章</span>
+          <h2 class="cs-chapter-name">北伐决心</h2>
+          <span class="cs-chapter-tag">出征 · 抱负</span>
+        </div>
+        <span class="cs-toggle" aria-hidden="true">⌄</span>
+      </summary>
+      <div class="cs-chapter-body">
+        <div class="cs-block cs-intro">
+          <h3 class="cs-h">导语</h3>
+          <p>奏章的最后，是一段没有退路的告白。从五月渡泸到北定中原，诸葛亮把他对先帝、对汉室、对自己的承诺，一次写满。</p>
+        </div>
+        <div class="cs-block cs-original">
+          <h3 class="cs-h">原文</h3>
+          <p>先帝知臣谨慎，故临崩寄臣以大事也。受命以来，夙夜忧叹，恐托付不效，以伤先帝之明。故五月渡泸，深入不毛。今南方已定，兵甲已足，当奖率三军，北定中原，庶竭驽钝，攘除奸凶，兴复汉室，还于旧都。此臣所以报先帝而忠陛下之职分也。</p>
+        </div>
+        <div class="cs-block cs-translation">
+          <h3 class="cs-h">现代译文</h3>
+          <p>先帝知道我做事谨慎，所以临终时把国家大事托付给我。接受遗命以来，我日夜忧虑叹息，唯恐辜负先帝的托付，损伤先帝识人的英明。因此我在五月渡过泸水，深入到荒凉之地。如今南方已经平定，兵器装备也已经充足，应当激励统率三军，北上平定中原，希望竭尽我平庸的才能，铲除奸邪凶恶的敌人，复兴汉朝王室，迁回旧日的都城。这就是我用以报答先帝、效忠陛下的职责本分。</p>
+        </div>
+        <div class="cs-block cs-notes">
+          <h3 class="cs-h">重点词语注释</h3>
+          <ul>
+            <li><b>夙夜：</b>早晚，引申为日夜。</li>
+            <li><b>不毛：</b>荒凉、不长庄稼之地。</li>
+            <li><b>奖率：</b>激励统率。</li>
+            <li><b>庶竭驽钝：</b>希望竭尽自己平庸的才能（自谦）。</li>
+            <li><b>攘除：</b>铲除。</li>
+            <li><b>旧都：</b>指汉朝旧都洛阳、长安。</li>
+          </ul>
+        </div>
+        <div class="cs-block cs-bg">
+          <h3 class="cs-h">历史背景</h3>
+          <p>公元 225 年，诸葛亮平定南中、稳定后方；227 年向后主呈上《出师表》，正式启动北伐。此后六出祁山、星落五丈原，他没有能等到"还于旧都"的那一天，但这一段文字成为了汉语世界里最完整的"个人承诺范本"。</p>
+        </div>
+        <div class="cs-block cs-ai">
+          <h3 class="cs-h">AI 老师推荐问题</h3>
+          <div class="cs-ai-q">
+            <button type="button" onclick="csAskTeacher('为什么明知胜算不大，诸葛亮还要坚持北伐？')">为什么明知胜算不大，诸葛亮还要坚持北伐？</button>
+            <button type="button" onclick="csAskTeacher('"庶竭驽钝"为何是自谦而非自卑？')">"庶竭驽钝"为何是自谦而非自卑？</button>
+            <button type="button" onclick="csAskTeacher('北伐失败，是否就否定了《出师表》？')">北伐失败，是否就否定了《出师表》？</button>
+          </div>
+        </div>
+        <div class="cs-block cs-debate">
+          <h3 class="cs-h">思辨挑战</h3>
+          <p class="q">明知很可能失败的事情，到底要不要去做？</p>
+          <div class="cs-debate-options">
+            <button type="button" onclick="csDebate(this,'A',7)">A. 不做。理性人应当避免无谓的代价</button>
+            <button type="button" onclick="csDebate(this,'B',7)">B. 要做。有些承诺的价值，正在于"不计胜负"</button>
+          </div>
+          <div class="cs-debate-result" data-debate="7">
+            <b>AI 点评：</b>这是没有标准答案的题目。诸葛亮选择 B，但他并不否定 A 的合理性——他在写下"庶竭驽钝"四个字时，就已经接受了可能失败的代价。真正值得思考的是：你的承诺，要不要包含"失败也愿意"。
+          </div>
+        </div>
+        <div class="cs-block cs-quote">
+          <h3 class="cs-h">金句字帖</h3>
+          <p class="cs-quote-text">"兴复汉室，还于旧都"</p>
+          <div class="cs-quote-grid">
+            <div class="char-box" data-char="兴"><span>兴</span></div>
+            <div class="char-box" data-char="复"><span>复</span></div>
+            <div class="char-box" data-char="汉"><span>汉</span></div>
+            <div class="char-box" data-char="室"><span>室</span></div>
+            <div class="char-box" data-char="还"><span>还</span></div>
+            <div class="char-box" data-char="于"><span>于</span></div>
+            <div class="char-box" data-char="旧"><span>旧</span></div>
+            <div class="char-box" data-char="都"><span>都</span></div>
+          </div>
+          <div class="cs-quote-actions">
+            <a class="btn" href="copybook.html">前往字帖临摹</a>
+            <button class="btn secondary" type="button" onclick="csCopyQuote('兴复汉室，还于旧都')">复制金句</button>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <div class="cs-scroll-rod bottom" aria-hidden="true"></div>
+    <p class="cs-end">书卷至此 · 出师表七章共读</p>
+  </section>
+</div>
+
+    <p class="footer-tip">墨香国学AI Demo V1.0｜本项目为前端模拟演示，不调用真实 API。</p>
+  </div>
+
+  <script src="js/main.js?v=2"></script>
+  <script>
+    /* ======== 出师表学习空间 V2.0：本页交互 ======== */
+    (function(){
+      // 1) 阅读进度条
+      var bar = document.getElementById('csProgressBar');
+      function updateProgress(){
+        var doc = document.documentElement;
+        var top = window.scrollY || doc.scrollTop;
+        var max = (doc.scrollHeight - doc.clientHeight) || 1;
+        var p = Math.max(0, Math.min(100, (top / max) * 100));
+        if (bar) bar.style.width = p.toFixed(2) + '%';
+      }
+      window.addEventListener('scroll', updateProgress, { passive: true });
+      window.addEventListener('resize', updateProgress);
+      updateProgress();
+
+      // 2) 目录高亮 & 平滑滚动（保留默认 hash 行为，增加 active 态）
+      var tocLinks = document.querySelectorAll('#csToc a');
+      var chapters = document.querySelectorAll('.cs-chapter');
+      function setActive(id){
+        tocLinks.forEach(function(a){
+          if (a.getAttribute('href') === '#' + id) a.classList.add('active');
+          else a.classList.remove('active');
+        });
+      }
+      tocLinks.forEach(function(a){
+        a.addEventListener('click', function(){
+          var id = a.getAttribute('href').slice(1);
+          var ch = document.getElementById(id);
+          if (ch && !ch.open) ch.open = true; // 跳转时若处于折叠则展开
+          setActive(id);
+        });
+      });
+      // 滚动时根据可视区高亮当前章节
+      if ('IntersectionObserver' in window){
+        var io = new IntersectionObserver(function(entries){
+          entries.forEach(function(e){
+            if (e.isIntersecting && e.intersectionRatio > 0.25){
+              setActive(e.target.id);
+            }
+          });
+        }, { rootMargin: '-30% 0px -55% 0px', threshold: [0, .25, .5, 1] });
+        chapters.forEach(function(c){ io.observe(c); });
+      }
+
+      // 3) 章节阅读完成检测：每章首次"读完"奖励 wisdom +1
+      // 标记位用 sessionStorage，本会话内不重复奖励；翻新会话重新计算
+      var readKey = 'moxiang.chapterRead.v1';
+      function getRead(){
+        try { return JSON.parse(sessionStorage.getItem(readKey)) || {}; }
+        catch(e){ return {}; }
+      }
+      function markRead(id, anchor){
+        var obj = getRead();
+        if (obj[id]) return;
+        obj[id] = 1;
+        try { sessionStorage.setItem(readKey, JSON.stringify(obj)); } catch(e){}
+        var name = (document.querySelector('#' + id + ' .cs-chapter-name') || {}).textContent || id;
+        if (typeof addGrowth === 'function'){
+          addGrowth('wisdom', 1, '+1 智慧值：完成《' + name + '》章节阅读', anchor);
+        }
+      }
+
+      // 给每章末尾插入一个"读完哨兵"，用 IO 检测
+      if ('IntersectionObserver' in window){
+        var endIO = new IntersectionObserver(function(entries){
+          entries.forEach(function(e){
+            if (e.isIntersecting){
+              var ch = e.target.closest('.cs-chapter');
+              if (ch && ch.id) markRead(ch.id, e.target);
+            }
+          });
+        }, { rootMargin: '0px 0px -10% 0px', threshold: 0.6 });
+
+        chapters.forEach(function(ch){
+          var body = ch.querySelector('.cs-chapter-body');
+          if (!body) return;
+          var sentinel = document.createElement('div');
+          sentinel.style.cssText = 'height:1px;margin-top:6px;';
+          sentinel.setAttribute('aria-hidden', 'true');
+          body.appendChild(sentinel);
+          endIO.observe(sentinel);
+        });
+      }
+
+      // 用户点击"金句字帖→前往字帖临摹"前，也算作完成该章
+      document.querySelectorAll('.cs-chapter').forEach(function(ch){
+        var btn = ch.querySelector('.cs-quote-actions .btn');
+        if (btn) btn.addEventListener('click', function(){ markRead(ch.id, btn); });
+      });
+    })();
+
+    // 3) 全部展开 / 全部折叠
+    function csToggleAll(open){
+      document.querySelectorAll('.cs-chapter').forEach(function(c){
+        c.open = !!open;
+      });
+      if (open && typeof toast === 'function') toast('已展开全部章节');
+      if (!open && typeof toast === 'function') toast('已折叠全部章节');
+    }
+
+    // 4) 思辨挑战：选择反馈
+    function csDebate(btn, choice, idx){
+      var card = btn.closest('.cs-debate');
+      if (!card) return;
+      card.querySelectorAll('button').forEach(function(b){ b.classList.remove('picked'); });
+      btn.classList.add('picked');
+      var box = card.querySelector('.cs-debate-result[data-debate="' + idx + '"]');
+      if (box) box.classList.add('show');
+      if (typeof addGrowth === 'function'){
+        addGrowth('thinking', 4, '思辨值 +4：第 ' + idx + ' 章思辨完成');
+      }
+    }
+
+    // 5) AI 老师推荐问题：跳转并附带预填问题（teacher.html 不变，使用 URL 参数承载）
+    function csAskTeacher(q){
+      try{
+        sessionStorage.setItem('moxiang.preset.question', q);
+      }catch(e){}
+      window.location.assign('teacher.html#q=' + encodeURIComponent(q));
+    }
+
+    // 6) 复制金句
+    function csCopyQuote(text){
+      var done = function(){
+        if (typeof toast === 'function') toast('金句已复制：' + text);
+        if (typeof addGrowth === 'function') addGrowth('calligraphy', 2, '书法值 +2：摘录金句');
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done, function(){
+          fallbackCopy(text); done();
+        });
+      } else {
+        fallbackCopy(text); done();
+      }
+    }
+    function fallbackCopy(text){
+      try{
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select(); document.execCommand('copy');
+        document.body.removeChild(ta);
+      }catch(e){}
+    }
+
+    // 7) 完成本卷学习
+    function csCompleteAll(){
+      if (typeof addGrowth === 'function'){
+        addGrowth('wisdom', 20, '智慧值 +20：完成《出师表》七章共读');
+      } else if (typeof toast === 'function'){
+        toast('已完成《出师表》七章共读');
+      }
+    }
+
+    // 暴露到全局，便于内联 onclick 调用
+    window.csToggleAll = csToggleAll;
+    window.csDebate = csDebate;
+    window.csAskTeacher = csAskTeacher;
+    window.csCopyQuote = csCopyQuote;
+    window.csCompleteAll = csCompleteAll;
+  </script>
+</body>
+</html>

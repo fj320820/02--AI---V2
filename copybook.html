@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>国风字帖｜墨香国学AI</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ===== 字帖馆：浅色宣纸风格 ===== */
+    .copybook-stage {
+      position: relative;
+      padding: clamp(26px, 4vw, 48px);
+      background:
+        radial-gradient(ellipse 60% 40% at 20% 30%, rgba(240,230,210,.3), transparent 50%),
+        radial-gradient(ellipse 50% 30% at 80% 70%, rgba(235,225,205,.2), transparent 40%),
+        linear-gradient(180deg, #f5efe6, #ede4d4);
+    }
+
+    /* ===== 首页主视觉 ===== */
+    .copybook-hero {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 480px);
+      gap: 40px;
+      align-items: center;
+      padding: clamp(20px, 3vw, 40px) 0;
+      margin-bottom: 32px;
+    }
+
+    /* 左侧文字区 */
+    .copybook-hero > div:first-child {
+      padding-right: 20px;
+    }
+
+    .copybook-eyebrow {
+      display: inline-block;
+      margin-bottom: 20px;
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+      font-size: 0.85rem;
+      color: #8a7048;
+      letter-spacing: 0.15em;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(160,130,80,.25);
+    }
+
+    .copybook-title {
+      margin: 0 0 14px;
+      color: var(--ink);
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      letter-spacing: -.02em;
+    }
+
+    .copybook-subtitle {
+      margin: 0 0 14px;
+      color: var(--ink);
+      font-size: clamp(1.05rem, 2.2vw, 1.45rem);
+      letter-spacing: -.02em;
+    }
+    .copybook-desc {
+      margin: 0;
+      max-width: 64em;
+      color: var(--muted);
+    }
+
+    .copybook-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .copybook-meta span {
+      padding: 6px 14px;
+      border: 1px solid rgba(160,130,80,.25);
+      border-radius: 3px;
+      color: #7a5a2e;
+      background: rgba(255,250,240,.5);
+      font-size: 0.82rem;
+      letter-spacing: 0.06em;
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+    }
+
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .action-row .btn {
+      padding: 11px 26px;
+      border-radius: 3px;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+      transition: all 0.25s ease;
+    }
+    .action-row .btn:first-child {
+      background: #8f1d24;
+      color: #f5efe6;
+      border: 1px solid #8f1d24;
+    }
+    .action-row .btn:first-child:hover {
+      background: #a52a2a;
+    }
+    .action-row .btn.secondary {
+      background: transparent;
+      color: #5a4320;
+      border: 1px solid rgba(160,130,80,.4);
+    }
+    .action-row .btn.secondary:hover {
+      background: rgba(160,130,80,.1);
+    }
+
+    /* 封面右侧：书房场景插画 */
+    .hero-figure {
+      position: relative;
+      align-self: stretch;
+      min-height: 380px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: url('images/copybook-hero-scene.jpg') center/cover no-repeat;
+      border: 1px solid rgba(160,130,80,.2);
+      box-shadow: 0 4px 20px rgba(60,40,18,.1);
+    }
+    /* 右侧竖排题签 */
+    .hero-figure .side-label {
+      position: absolute;
+      top: 30px;
+      right: 20px;
+      writing-mode: vertical-rl;
+      font-family: "STKaiti", "KaiTi", serif;
+      font-size: 1.2rem;
+      letter-spacing: 0.3em;
+      color: rgba(245,235,220,.85);
+      text-shadow: 0 2px 8px rgba(0,0,0,.5);
+      z-index: 3;
+      padding: 16px 6px;
+      border: 1px solid rgba(245,235,220,.25);
+      border-radius: 4px;
+      background: rgba(0,0,0,.2);
+    }
+    /* 底部淡墨渐变 */
+    .hero-figure::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      background: linear-gradient(180deg, transparent, rgba(245,239,230,.6));
+      pointer-events: none;
+    }
+
+    /* ===== 卷轴书卷区 ===== */
+    .scroll-book {
+      position: relative;
+      z-index: 2;
+      margin-top: 24px;
+    }
+
+    /* 卷轴轴头 */
+    .scroll-rod {
+      position: relative;
+      height: 18px;
+      margin: 0 0 24px;
+      background: linear-gradient(90deg,
+        #3d2818 0%, #7a5a3a 12%, #c4a876 30%, #e8d4a8 50%,
+        #c4a876 70%, #7a5a3a 88%, #3d2818 100%
+      );
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.2),
+        inset 0 -2px 4px rgba(0,0,0,.3),
+        0 6px 16px rgba(0,0,0,.15);
+    }
+    .scroll-rod::before,
+    .scroll-rod::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 32px;
+      height: 30px;
+      border-radius: 50%;
+      transform: translateY(-50%);
+      background: radial-gradient(circle at 35% 30%, #f0e0b8, #9a7a4a 68%, #2a1a0c);
+      box-shadow: 0 4px 12px rgba(0,0,0,.3);
+    }
+    .scroll-rod::before { left: -8px; }
+    .scroll-rod::after { right: -8px; }
+    .scroll-rod.bottom { margin: 24px 0 0; }
+
+    /* 出版说明 */
+    .publisher-note {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin: 0 auto 28px;
+      max-width: 960px;
+    }
+    .publisher-note div {
+      padding: 20px 18px;
+      border: 1px solid rgba(160,130,80,.18);
+      background: rgba(255,250,240,.4);
+      text-align: center;
+    }
+    .publisher-note b {
+      display: block;
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+      color: #1a0e05;
+      margin-bottom: 8px;
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+    }
+    .publisher-note p {
+      margin: 0;
+      color: #7a5a2e;
+      font-size: 0.88rem;
+      line-height: 1.7;
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+    }
+
+    /* ===== 字帖卡片：浅色宣纸风格 ===== */
+    .premium-copy-grid {
+      display: grid;
+      gap: 28px;
+      justify-items: center;
+    }
+    .premium-copy-card {
+      position: relative;
+      width: min(100%, 960px);
+      min-height: auto;
+      border: 1px solid rgba(160,130,80,.2);
+      padding: clamp(24px, 4vw, 40px);
+      color: #3d2c19;
+      background:
+        radial-gradient(circle at 15% 0%, rgba(255,255,255,.6), transparent 18rem),
+        radial-gradient(circle at 88% 12%, rgba(143,29,36,.03), transparent 18rem),
+        linear-gradient(180deg, #fdf8f0, #f5ead8 65%, #ede0cc);
+      box-shadow:
+        inset 0 0 0 6px rgba(255,250,240,.8),
+        inset 0 0 0 7px rgba(160,130,80,.12),
+        0 8px 32px rgba(60,40,18,.08);
+      overflow: hidden;
+    }
+    .premium-copy-card::before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border: 1px solid rgba(160,130,80,.1);
+      pointer-events: none;
+    }
+
+    /* 页眉 */
+    .copy-page-bar {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(160,130,80,.2);
+      color: #8a7048;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+    }
+    .copy-page-bar span:nth-child(2) {
+      justify-self: center;
+      padding: 2px 10px;
+      border: 1px solid rgba(160,130,80,.3);
+      color: #8f1d24;
+      background: rgba(255,250,240,.6);
+      font-weight: 600;
+    }
+    .copy-page-bar span:last-child {
+      justify-self: end;
+      color: rgba(120,100,70,.5);
+    }
+
+    /* 金句标题 */
+    .copy-card-head {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(160,130,80,.15);
+      margin-bottom: 20px;
+    }
+    .copy-card-head h2 {
+      margin: 0 0 8px;
+      color: #1a0e05;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      letter-spacing: 0.08em;
+      font-weight: 600;
+      font-family: "STKaiti", "KaiTi", "Kaiti SC", serif;
+    }
+    .copy-card-head p {
+      margin: 0;
+      color: #7a5a2e;
+      line-height: 1.7;
+      font-size: 0.9rem;
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+    }
+
+    /* 字帖主区域：左侧田字格 + 右侧结构提示 */
+    .copybook-sheet {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 200px;
+      gap: 20px;
+    }
+
+    /* 字帖行：标签 + 格子 */
+    .sheet-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .sheet-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    /* 左侧竖排标签 */
+    .row-label {
+      writing-mode: vertical-rl;
+      font-family: "STKaiti", "KaiTi", serif;
+      font-size: 0.8rem;
+      color: #8a7048;
+      letter-spacing: 0.25em;
+      padding: 12px 4px;
+      border: 1px solid rgba(160,130,80,.2);
+      border-radius: 4px;
+      background: rgba(255,250,240,.5);
+      flex-shrink: 0;
+      align-self: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 田字格容器 */
+    .tian-grid {
+      display: grid;
+      grid-template-columns: repeat(9, 1.2cm);
+      gap: 6px;
+      flex: 1;
+    }
+
+    /* 田字格单元：固定 1.2cm */
+    .tian-cell {
+      width: 1.2cm;
+      height: 1.2cm;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(180,150,110,.35);
+      background:
+        linear-gradient(45deg, transparent 49.5%, rgba(180,150,110,.15) 50%, transparent 50.5%),
+        linear-gradient(-45deg, transparent 49.5%, rgba(180,150,110,.15) 50%, transparent 50.5%),
+        linear-gradient(90deg, transparent 49.5%, rgba(180,150,110,.12) 50%, transparent 50.5%),
+        linear-gradient(0deg, transparent 49.5%, rgba(180,150,110,.12) 50%, transparent 50.5%),
+        rgba(255,253,248,.4);
+    }
+    .tian-cell .char {
+      font-family: "STKaiti", "KaiTi", "Kaiti SC", "FangSong", serif;
+      font-size: 0.9rem;
+      line-height: 1;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* 示范字 - 黑色 */
+    .demo-row .tian-cell .char {
+      color: #1a0e05;
+    }
+    /* 描红字 - 浅红 */
+    .trace-row .tian-cell .char {
+      color: rgba(198,90,90,.3);
+    }
+    /* 练习区 - 空白 */
+    .practice-row .tian-cell {
+      background:
+        linear-gradient(45deg, transparent 49.5%, rgba(180,150,110,.1) 50%, transparent 50.5%),
+        linear-gradient(-45deg, transparent 49.5%, rgba(180,150,110,.1) 50%, transparent 50.5%),
+        linear-gradient(90deg, transparent 49.5%, rgba(180,150,110,.08) 50%, transparent 50.5%),
+        linear-gradient(0deg, transparent 49.5%, rgba(180,150,110,.08) 50%, transparent 50.5%),
+        rgba(255,253,248,.3);
+    }
+
+    /* 底部提示 */
+    .sheet-footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(160,130,80,.15);
+      font-family: "STKaiti", "KaiTi", serif;
+      font-size: 0.75rem;
+      color: #9a8a70;
+      letter-spacing: 0.05em;
+    }
+
+    /* 右侧竖排题签 */
+    .card-side-label {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      writing-mode: vertical-rl;
+      font-family: "STKaiti", "KaiTi", serif;
+      font-size: 1rem;
+      color: #8a7048;
+      letter-spacing: 0.3em;
+      padding: 14px 6px;
+      border: 1px solid rgba(160,130,80,.2);
+      border-radius: 4px;
+      background: rgba(255,250,240,.4);
+      z-index: 2;
+    }
+    .card-side-label .seal {
+      margin-top: 10px;
+      width: 22px;
+      height: 22px;
+      border: 1.5px solid rgba(143,29,36,.6);
+      border-radius: 3px;
+      display: grid;
+      place-items: center;
+      font-size: 0.55rem;
+      color: rgba(143,29,36,.7);
+      transform: rotate(-3deg);
+    }
+
+    /* 写后思辨 */
+    .card-thinking {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border: 1px solid rgba(143,29,36,.25);
+      background: rgba(255,250,240,.4);
+      position: relative;
+    }
+    .card-thinking-label {
+      position: absolute;
+      top: -10px;
+      left: 16px;
+      padding: 2px 10px;
+      background: #fdf8f0;
+      font-family: "STKaiti", "KaiTi", serif;
+      font-size: 0.78rem;
+      color: #8f1d24;
+      letter-spacing: 0.15em;
+      border: 1px solid rgba(143,29,36,.2);
+    }
+    .card-thinking-q {
+      margin: 0;
+      color: #8f1d24;
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+      font-size: 0.9rem;
+      line-height: 1.8;
+      letter-spacing: 0.05em;
+    }
+
+    /* 右侧结构提示面板（两列） */
+    .card-tips {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .card-tips-title {
+      font-family: "STKaiti", "KaiTi", serif;
+      font-size: 0.85rem;
+      color: #8a7048;
+      letter-spacing: 0.15em;
+      text-align: center;
+      padding: 8px;
+      border: 1px solid rgba(160,130,80,.2);
+      background: rgba(255,250,240,.4);
+    }
+    .card-tips-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .card-tips-grid .tip-item {
+      font-family: "STKaiti", "KaiTi", serif;
+      font-size: 0.65rem;
+      color: #9a8a70;
+      line-height: 1.5;
+      text-align: center;
+      padding: 8px 4px;
+      border: 1px solid rgba(160,130,80,.12);
+      background: rgba(255,250,240,.3);
+      border-radius: 3px;
+    }
+    .card-tips-grid .tip-item b {
+      display: block;
+      font-size: 0.75rem;
+      color: #5a4320;
+      margin-bottom: 4px;
+    }
+
+    .copybook-end {
+      margin: 20px 0 0;
+      text-align: center;
+      color: #8a7a60;
+      letter-spacing: 0.12em;
+      font-size: 0.88rem;
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+    }
+
+    /* ===== 读其文 习其字 悟其志 · 田字格展示 ===== */
+    .motto-tian-grid {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin: 28px auto 24px;
+      padding: 20px 0;
+    }
+    .motto-line {
+      display: flex;
+      gap: 10px;
+    }
+    .motto-cell {
+      width: 56px;
+      height: 56px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(180,150,110,.35);
+      background:
+        linear-gradient(45deg, transparent 49.5%, rgba(180,150,110,.15) 50%, transparent 50.5%),
+        linear-gradient(-45deg, transparent 49.5%, rgba(180,150,110,.15) 50%, transparent 50.5%),
+        linear-gradient(90deg, transparent 49.5%, rgba(180,150,110,.12) 50%, transparent 50.5%),
+        linear-gradient(0deg, transparent 49.5%, rgba(180,150,110,.12) 50%, transparent 50.5%),
+        rgba(255,253,248,.5);
+    }
+    .motto-char {
+      font-family: "STKaiti", "KaiTi", "Kaiti SC", serif;
+      font-size: 1.6rem;
+      color: #8f1d24;
+      line-height: 1;
+    }
+    @media (max-width: 720px) {
+      .motto-cell {
+        width: 44px;
+        height: 44px;
+      }
+      .motto-char {
+        font-size: 1.3rem;
+      }
+    }
+
+    @media (max-width: 960px) {
+      .copybook-hero,
+      .practice-layout,
+      .publisher-note {
+        grid-template-columns: 1fr;
+      }
+      .hero-figure {
+        min-height: 280px;
+        order: -1;
+      }
+    }
+    @media (max-width: 720px) {
+      .copybook-stage {
+        padding: 20px 14px;
+      }
+      .copy-card-head {
+        grid-template-columns: 1fr;
+      }
+      .mini-seal {
+        width: 56px;
+        height: 56px;
+        font-size: 0.75rem;
+      }
+      .model-grid,
+      .trace-grid,
+      .free-grid {
+        grid-template-columns: repeat(auto-fit, minmax(46px, 1fr));
+      }
+    }
+    @media print {
+      .copybook-stage,
+      .premium-copy-card {
+        box-shadow: none;
+      }
+      .publisher-note,
+      .reward-row,
+      .thinking-options,
+      .ai-comment {
+        display: none !important;
+      }
+      .premium-copy-card {
+        page-break-inside: avoid;
+        margin-bottom: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    
+<nav class="topbar">
+  <a class="brand" href="index.html" aria-label="返回首页">
+    <span class="brand-seal">墨</span>
+    <span>
+      <strong>墨香国学AI</strong>
+      <small>Demo V1.0</small>
+    </span>
+  </a>
+  <div class="nav-links" aria-label="主导航">
+    <a href="index.html">首页</a>
+    <a href="article.html">古文学习</a>
+    <a href="teacher.html">AI老师</a>
+    <a href="copybook.html">国风字帖</a>
+    <a href="thinking.html">思辨挑战</a>
+    <a href="chat.html">人物互动</a>
+  </div>
+</nav>
+<section class="growth-panel" aria-label="成长系统">
+  <div class="growth-title">
+    <span>成长系统</span>
+    <strong data-growth-rank>初入草庐</strong>
+  </div>
+  <div class="growth-bar">
+    <div class="growth-item">
+      <span>智慧值</span>
+      <strong data-growth="wisdom">0</strong>
+      <div class="growth-track"><i data-growth-bar="wisdom"></i></div>
+    </div>
+    <div class="growth-item">
+      <span>书法值</span>
+      <strong data-growth="calligraphy">0</strong>
+      <div class="growth-track"><i data-growth-bar="calligraphy"></i></div>
+    </div>
+    <div class="growth-item">
+      <span>思辨值</span>
+      <strong data-growth="thinking">0</strong>
+      <div class="growth-track"><i data-growth-bar="thinking"></i></div>
+    </div>
+  </div>
+</section>
+
+    
+<main class="copybook-stage">
+  <section class="copybook-hero" aria-label="字帖馆封面">
+    <div>
+      <span class="copybook-eyebrow">出师表金句字帖 · 七章金句逐句临摹</span>
+      <h1 class="copybook-title">《出师表》金句字帖</h1>
+      <!-- 读其文 习其字 悟其志 -->
+      <div class="motto-tian-grid">
+        <div class="motto-line">
+          <div class="motto-cell"><span class="motto-char">读</span></div>
+          <div class="motto-cell"><span class="motto-char">其</span></div>
+          <div class="motto-cell"><span class="motto-char">文</span></div>
+        </div>
+        <div class="motto-line">
+          <div class="motto-cell"><span class="motto-char">习</span></div>
+          <div class="motto-cell"><span class="motto-char">其</span></div>
+          <div class="motto-cell"><span class="motto-char">字</span></div>
+        </div>
+        <div class="motto-line">
+          <div class="motto-cell"><span class="motto-char">悟</span></div>
+          <div class="motto-cell"><span class="motto-char">其</span></div>
+          <div class="motto-cell"><span class="motto-char">志</span></div>
+        </div>
+      </div>
+      <p class="copybook-desc">本页按照《出师表》七章结构建立字帖单元，每章选取核心金句，固定包含金句标题、句意说明、示范字、描红区、独写区、结构提示、思辨问题与成长奖励。保持宣纸背景、朱砂印章、红色田字格与书卷分页质感，支持滚动浏览与打印练习。</p>
+      <div class="copybook-meta">
+        <span>章节结构 · 7 章</span>
+        <span>字帖单元 · 7 张独立分页卡片</span>
+        <span>练习流程 · 示范 → 描红 → 独写 → 思辨</span>
+        <span>成长奖励 · 书法 + 智慧 + 思辨</span>
+      </div>
+      <div class="action-row">
+        <button class="btn" type="button" onclick="completeCopybookAll()">完成七章全卷奖励</button>
+        <button class="btn secondary" type="button" onclick="window.print()">打印出版版式</button>
+      </div>
+    </div>
+    <div class="hero-figure" aria-hidden="true">
+      <div class="side-label">出师表</div>
+    </div>
+  </section>
+
+  <section class="scroll-book" aria-label="出师表七章字帖">
+    <div class="scroll-rod" aria-hidden="true"></div>
+
+    <div class="publisher-note">
+      <div>
+        <b>一章一帖</b>
+        <p>每章对应一组核心金句，让古文学习转化为连续临帖任务。</p>
+      </div>
+      <div>
+        <b>三步练字</b>
+        <p>先看示范字，再沿浅红描红，最后在空白田字格独写。</p>
+      </div>
+      <div>
+        <b>写后思辨</b>
+        <p>每章设置一句启发和一个问题，让书写连接责任、选择与担当。</p>
+      </div>
+    </div>
+
+    <section class="premium-copy-grid" id="copybookUnits" aria-label="出师表七章全文字帖单元"></section>
+
+    <div class="scroll-rod bottom" aria-hidden="true"></div>
+    <p class="copybook-end">墨香落纸 · 临帖成心</p>
+  </section>
+</main>
+
+    <p class="footer-tip">墨香国学AI Demo V1.0｜本项目为前端模拟演示，不调用真实 API。</p>
+  </div>
+  <script src="js/main.js?v=2"></script>
+  <script>
+    // 出师表全文字帖系统：七章数据、田字格生成、成长奖励与思辨反馈
+    var copybookUnits = [
+      {
+        chapter: "第一章《危局存亡》",
+        seal: "危局",
+        title: "危急存亡之秋",
+        text: "危急存亡之秋",
+        meaning: "国家处在生死存亡的关键时刻。练这一句，要写出紧迫、沉稳与清醒判断。",
+        insight: "真正的清醒，是敢于看见危局，也敢于从危局中寻找可做之事。",
+        question: "面对困难时，先承认问题会不会比盲目乐观更重要？",
+        aiComment: "笔锋越稳，心越能直面危局——书写时的从容，是面对困境的第一份勇气。",
+        thinking: [
+          "A. 会。看见问题，才可能找到解决路径。",
+          "B. 不一定。过度强调危机，也可能削弱信心。"
+        ],
+        structure: [
+          ["危", "半包围结构，上部收紧，下部竖弯钩要稳住重心。"],
+          ["急", "上下结构，上紧下稳，心字底三点要有呼应。"],
+          ["存", "半包围感明显，横撇开张，子部居中。"],
+          ["亡", "上点居中，横画平稳，竖折收笔干净。"],
+          ["秋", "左右结构，禾旁略窄，火部撇捺舒展。"]
+        ]
+      },
+      {
+        chapter: "第二章《广开言路》",
+        seal: "听言",
+        title: "开张圣听",
+        text: "开张圣听",
+        meaning: "广泛听取意见，不堵塞忠诚进言的道路。练这一句，要写出开阔、端正和包容。",
+        insight: "愿意听见不同声音，是一个人成熟的开始。",
+        question: "如果别人提出反对意见，我们应该先防御，还是先理解？",
+        aiComment: "横画写得舒展，胸襟也才容得下不同声音——开张于纸，亦开张于心。",
+        thinking: [
+          "A. 先理解。反对意见可能补上自己的盲区。",
+          "B. 先判断。不是所有意见都值得接受。"
+        ],
+        structure: [
+          ["开", "两横平行，竖撇舒展，整体要开阔。"],
+          ["张", "左右结构，弓旁偏窄，长字旁收放有度。"],
+          ["圣", "上下结构，上部不宜过大，下部土字要稳。"],
+          ["听", "左右结构，口旁偏小，斤部竖画挺拔。"]
+        ]
+      },
+      {
+        chapter: "第三章《赏罚分明》",
+        seal: "公正",
+        title: "陟罚臧否，不宜异同",
+        text: "陟罚臧否不宜异同",
+        meaning: "提拔、惩罚、表扬、批评，都不应因人而异。练这一句，要写出规则感和端正感。",
+        insight: "真正的公平，不是没有温度，而是同一把尺子对待每个人。",
+        question: "规则面前，应不应该给熟悉的人更多例外？",
+        aiComment: "字形端正，笔笔不偏——一笔一画的规整，正在练习「对人对己同一把尺子」。",
+        thinking: [
+          "A. 不应该。例外太多，规则就会失去信任。",
+          "B. 要看情况。人情与规则有时需要平衡。"
+        ],
+        structure: [
+          ["陟", "左右结构，左耳旁窄长，右部层次要清楚。"],
+          ["罚", "上下结构，罒部扁平，下部左右分布均衡。"],
+          ["臧", "笔画较多，中宫收紧，斜势中保持重心稳定。"],
+          ["否", "上下结构，上部不宜压低，口部居中。"],
+          ["异", "上收下放，下方撇竖要有支撑。"],
+          ["同", "外框端正，内部口字居中留白。"]
+        ]
+      },
+      {
+        chapter: "第四章《亲贤远佞》",
+        seal: "亲贤",
+        title: "亲贤臣，远小人",
+        text: "亲贤臣远小人",
+        meaning: "亲近有德有才的人，远离只顾私利的小人。练这一句，要写出选择的坚定。",
+        insight: "你靠近什么样的人，往往也在慢慢成为那样的人。",
+        question: "选择朋友时，看重「开心」还是「彼此变好」？",
+        aiComment: "笔下选择哪一笔落下，就像生活中选择和谁同行——书写有取舍，品格才有方向。",
+        thinking: [
+          "A. 彼此变好更重要，环境会塑造一个人。",
+          "B. 开心也重要，关系不能只用价值衡量。"
+        ],
+        structure: [
+          ["亲", "上紧下舒，横画间距均匀，下部两点呼应。"],
+          ["贤", "上部收紧，下部贝字托住全字。"],
+          ["臣", "外框端正，内部留白均匀。"],
+          ["远", "走之底平稳送出，托住右上主体。"],
+          ["小", "竖钩居中，两点左右呼应。"],
+          ["人", "撇捺开合适中，重心落稳。"]
+        ]
+      },
+      {
+        chapter: "第五章《躬耕南阳》",
+        seal: "三顾",
+        title: "三顾臣于草庐之中",
+        text: "三顾臣于草庐之中",
+        meaning: "先帝三次到草庐拜访诸葛亮，体现尊重人才、以诚相待。练这一句，要写出谦逊与知遇之恩。",
+        insight: "被真正尊重过的人，往往更愿意承担长久的责任。",
+        question: "一份真诚的信任，能不能改变一个人的人生选择？",
+        aiComment: "笔锋肯一次次回到田字格中央，就像有人愿意三次走进草庐——耐心，是诚意最好的字形。",
+        thinking: [
+          "A. 能。被看见和被尊重，会激发人的担当。",
+          "B. 不一定。人生选择还要看个人准备是否充分。"
+        ],
+        structure: [
+          ["三", "三横有长短变化，间距均匀。"],
+          ["顾", "左右结构，左部收，页部稳，左右相让。"],
+          ["臣", "外框要正，中部空间不可挤。"],
+          ["草", "草字头扁而舒展，下部早字居中。"],
+          ["庐", "广字旁开张，内部户字收紧。"],
+          ["中", "口框端正，竖画贯穿中线。"]
+        ]
+      },
+      {
+        chapter: "第六章《临危受命》",
+        seal: "受命",
+        title: "受任于败军之际，奉命于危难之间",
+        text: "受任于败军之际奉命于危难之间",
+        meaning: "在战败与危难时接受使命，写出诸葛亮临危受命的担当。练这一句，要把长句写出节奏。",
+        insight: "有些责任，不是在顺境里出现，而是在最难的时候落到肩上。",
+        question: "为什么诸葛亮选择在危难中承担责任？",
+        aiComment: "长句写得节奏分明，就像在重压之下仍能稳住呼吸——担当，是把「难」字写得不慌的能力。",
+        thinking: [
+          "A. 因为先帝托付在前，责任比个人安危更重。",
+          "B. 因为越是危难，越需要有人先稳住局面。"
+        ],
+        structure: [
+          ["受", "上下结构，中部收紧，底部又字舒展。"],
+          ["任", "左右结构，亻旁竖直，壬部横画有层次。"],
+          ["败", "贝旁不宜宽，攵部撇捺展开。"],
+          ["军", "秃宝盖宜扁，下部车字立稳。"],
+          ["奉", "三横长短有序，下部竖画居中。"],
+          ["命", "上下结构，上部人字开合，口部与下部对齐。"],
+          ["危", "上部收，下部横折钩稳定。"],
+          ["难", "左右结构，左部不散，隹部竖画成列。"]
+        ]
+      },
+      {
+        chapter: "第七章《北伐决心》",
+        seal: "尽瘁",
+        title: "鞠躬尽瘁，死而后已",
+        text: "鞠躬尽瘁死而后已",
+        meaning: "虽非《出师表》原句，却最能概括诸葛亮北伐决心与一生精神。练这一句，要写出坚毅与收束。",
+        insight: "坚持不是固执，而是在明白代价之后仍愿意负责。",
+        question: "坚持一定正确吗？什么时候坚持会变成固执？",
+        aiComment: "最后一笔肯落得干脆，是因为心里早已认下代价——这就是「鞠躬尽瘁」最动人的字形。",
+        thinking: [
+          "A. 坚持需要方向正确，否则越努力越偏离目标。",
+          "B. 有些承诺的价值，正在于即使艰难也不轻易放弃。"
+        ],
+        structure: [
+          ["鞠", "左右结构，革旁稳，右部包裹紧凑。"],
+          ["躬", "左右结构，身旁瘦长，弓部有弹性。"],
+          ["尽", "上部收紧，下方两点呼应。"],
+          ["瘁", "病字旁包住内部，卒字重心居中。"],
+          ["死", "歹部横撇舒展，匕部收笔清楚。"],
+          ["已", "末笔收放准确，避免与己、巳混淆。"]
+        ]
+      }
+    ];
+
+    function cleanText(text) {
+      return String(text || "").replace(/[，。、；：？！""《》\s]/g, "");
+    }
+
+    function createCells(container, text, count) {
+      var chars = text ? Array.from(cleanText(text)) : Array.from({ length: count || 0 }, function () { return ""; });
+      chars.forEach(function (ch) {
+        var cell = document.createElement("span");
+        cell.className = "practice-cell";
+        if (ch) cell.setAttribute("data-char", ch);
+        container.appendChild(cell);
+      });
+    }
+
+    function renderCopybookUnits() {
+      var root = document.getElementById("copybookUnits");
+      if (!root) return;
+      root.innerHTML = "";
+      copybookUnits.forEach(function (unit, index) {
+        var plain = cleanText(unit.text);
+        var chars = Array.from(plain);
+        var card = document.createElement("article");
+        card.className = "premium-copy-card";
+
+        // 生成田字格 HTML
+        function makeGrid(charList, isTrace, showIllust, twoRows) {
+          var html = '<div class="tian-grid">';
+          // 第一行：字符 + 补满9列
+          charList.forEach(function(ch) {
+            var charHtml = ch ? '<span class="char">' + ch + '</span>' : '';
+            html += '<div class="tian-cell">' + charHtml + '</div>';
+          });
+          var remainder = charList.length % 9;
+          if (remainder > 0) {
+            var emptyCount = 9 - remainder;
+            for (var i = 0; i < emptyCount; i++) {
+              html += '<div class="tian-cell"></div>';
+            }
+          }
+
+          // 第二行：9个空白格（如果需要2行）
+          if (twoRows) {
+            for (var j = 0; j < 9; j++) {
+              html += '<div class="tian-cell"></div>';
+            }
+          }
+          html += '</div>';
+          return html;
+        }
+
+        // 练习区：2行 × 9列 = 18格
+        function makePracticeGrid() {
+          var html = '<div class="tian-grid">';
+          for (var i = 0; i < 18; i++) {
+            html += '<div class="tian-cell"></div>';
+          }
+          html += '</div>';
+          return html;
+        }
+
+        card.innerHTML = ''
+          + '<div class="copy-page-bar">'
+          + '<span>《出师表》 · 第' + (index + 1) + '帖</span>'
+          + '<span></span>'
+          + '<span>墨香字帖 · 国风练字帖</span>'
+          + '</div>'
+          + '<div class="copy-card-head">'
+          + '<h2>' + unit.title + '</h2>'
+          + '<p>' + unit.meaning + '</p>'
+          + '</div>'
+          + '<div class="copybook-sheet">'
+          + '<div class="sheet-rows">'
+          + '<div class="sheet-row demo-row">'
+          + '<div class="row-label">示范字</div>'
+          + makeGrid(chars, false, false, false)
+          + '</div>'
+          + '<div class="sheet-row trace-row">'
+          + '<div class="row-label">描红字</div>'
+          + makeGrid(chars, true, false, true)
+          + '</div>'
+          + '<div class="sheet-row practice-row">'
+          + '<div class="row-label">练习区</div>'
+          + makePracticeGrid()
+          + '</div>'
+          + '<div class="sheet-footer">'
+          + '<span>书写要点：横平竖直，结构匀称，注意轻重缓急。</span>'
+          + '<span>章法提示：字距均匀，大小一致，整体协调。</span>'
+          + '</div>'
+          + '<div class="card-thinking">'
+          + '<div class="card-thinking-label">写后思辨</div>'
+          + '<p class="card-thinking-q">' + unit.question + '</p>'
+          + '</div>'
+          + '</div>'
+          + '<div class="card-tips">'
+          + '<div class="card-tips-title">结构提示</div>'
+          + '<div class="card-tips-grid">'
+          + unit.structure.map(function (item) {
+            return '<div class="tip-item"><b>' + item[0] + '</b>' + item[1] + '</div>';
+          }).join("")
+          + '</div>'
+          + '</div>'
+          + '</div>';
+        root.appendChild(card);
+      });
+
+      // 练习区交互：可编辑
+      root.querySelectorAll(".practice-row .tian-cell").forEach(function (cell) {
+        cell.setAttribute("contenteditable", "true");
+        cell.setAttribute("spellcheck", "false");
+        cell.setAttribute("role", "textbox");
+        cell.addEventListener("input", function () {
+          var t = (cell.textContent || "").replace(/\s/g, "");
+          if (t.length > 1) {
+            cell.textContent = t.charAt(0);
+          }
+        });
+      });
+    }
+
+    function completeCopybookAll() {
+      if (typeof addGrowth === "function") {
+        addGrowth("calligraphy", 70, "书法值 +70：完成《出师表》七章全卷字帖");
+      } else if (typeof toast === "function") {
+        toast("已完成七章全卷奖励");
+      }
+    }
+
+    renderCopybookUnits();
+  </script>
+</body>
+</html>

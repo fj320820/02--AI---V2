@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>出师表字帖练习</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    @page {
+      size: A4;
+      margin: 15mm;
+    }
+
+    body {
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", "STSong", serif;
+      background: #f0e8d8;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    /* A4 字帖页 */
+    .sheet {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      background: #faf6f0;
+      padding: 20mm 18mm;
+      position: relative;
+      box-shadow: 0 2px 12px rgba(60,40,18,.1);
+    }
+
+    /* 淡墨山水背景（左下角） */
+    .sheet::before {
+      content: "";
+      position: absolute;
+      bottom: 15mm;
+      left: 12mm;
+      width: 80mm;
+      height: 50mm;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120"><path d="M0 120 Q30 80 60 90 Q90 70 120 85 Q150 60 200 75 L200 120 Z" fill="rgba(160,140,110,.08)"/><path d="M20 120 Q50 95 80 100 Q110 85 140 95 Q170 80 200 90 L200 120 Z" fill="rgba(140,120,90,.06)"/></svg>') no-repeat bottom left;
+      background-size: contain;
+      pointer-events: none;
+    }
+
+    /* 页眉 */
+    .sheet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16mm;
+      padding-bottom: 4mm;
+      border-bottom: 1px solid rgba(160,130,80,.25);
+    }
+    .sheet-header .left {
+      font-family: "STKaiti", "KaiTi", serif;
+      font-size: 0.9rem;
+      color: #5a4320;
+      letter-spacing: 0.1em;
+    }
+    .sheet-header .right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: "STKaiti", "KaiTi", serif;
+      font-size: 0.85rem;
+      color: #5a4320;
+      letter-spacing: 0.08em;
+    }
+    .sheet-header .seal {
+      width: 22px;
+      height: 22px;
+      border: 1.5px solid rgba(143,29,36,.7);
+      border-radius: 3px;
+      display: grid;
+      place-items: center;
+      font-size: 0.55rem;
+      color: rgba(143,29,36,.8);
+      transform: rotate(-2deg);
+    }
+
+    /* 金句标题 */
+    .quote-title {
+      text-align: center;
+      margin-bottom: 14mm;
+    }
+    .quote-title h1 {
+      font-family: "STKaiti", "KaiTi", "Kaiti SC", serif;
+      font-size: 1.6rem;
+      color: #1a0e05;
+      letter-spacing: 0.12em;
+      line-height: 1.6;
+      font-weight: 500;
+    }
+
+    /* 右侧竖排标签 */
+    .side-label {
+      position: absolute;
+      right: 8mm;
+      top: 50%;
+      transform: translateY(-50%);
+      writing-mode: vertical-rl;
+      font-family: "STKaiti", "KaiTi", serif;
+      font-size: 0.8rem;
+      color: #8a7048;
+      letter-spacing: 0.2em;
+      padding: 10px 4px;
+      border: 1px solid rgba(160,130,80,.3);
+      border-radius: 4px;
+      background: rgba(255,250,240,.5);
+    }
+    .side-label .seal-small {
+      margin-top: 8px;
+      width: 20px;
+      height: 20px;
+      border: 1.5px solid rgba(143,29,36,.6);
+      border-radius: 3px;
+      display: grid;
+      place-items: center;
+      font-size: 0.5rem;
+      color: rgba(143,29,36,.7);
+      transform: rotate(-3deg);
+    }
+
+    /* 字帖区域 */
+    .copybook-area {
+      position: relative;
+      padding-right: 18mm;
+    }
+
+    /* 左侧竖排区域标签 */
+    .section-row {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 10mm;
+    }
+    .section-label {
+      writing-mode: vertical-rl;
+      font-family: "STKaiti", "KaiTi", serif;
+      font-size: 0.75rem;
+      color: #8a7048;
+      letter-spacing: 0.25em;
+      padding: 8px 3px;
+      border: 1px solid rgba(160,130,80,.25);
+      border-radius: 3px;
+      background: rgba(255,250,240,.4);
+      margin-right: 10px;
+      flex-shrink: 0;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 田字格容器 */
+    .grid-wrap {
+      flex: 1;
+    }
+    .char-grid {
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      gap: 6px;
+    }
+
+    /* 田字格单元 */
+    .tian-cell {
+      aspect-ratio: 1;
+      border: 1px solid rgba(160,130,80,.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: rgba(255,253,248,.5);
+    }
+    /* 米字格线 */
+    .tian-cell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(45deg, transparent 49.5%, rgba(160,130,80,.12) 50%, transparent 50.5%),
+        linear-gradient(-45deg, transparent 49.5%, rgba(160,130,80,.12) 50%, transparent 50.5%),
+        linear-gradient(90deg, transparent 49.5%, rgba(160,130,80,.1) 50%, transparent 50.5%),
+        linear-gradient(0deg, transparent 49.5%, rgba(160,130,80,.1) 50%, transparent 50.5%);
+      pointer-events: none;
+    }
+    .tian-cell .char {
+      font-family: "STKaiti", "KaiTi", "Kaiti SC", serif;
+      font-size: 1.6rem;
+      position: relative;
+      z-index: 1;
+      line-height: 1;
+    }
+
+    /* 示范字 - 黑色 */
+    .demo-section .char {
+      color: #1a0e05;
+    }
+    /* 描红字 - 浅红 */
+    .trace-section .char {
+      color: rgba(198,90,90,.35);
+    }
+    /* 练习区 - 空白 */
+    .practice-section .tian-cell {
+      background: rgba(255,253,248,.3);
+    }
+
+    /* 底部提示 */
+    .sheet-footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 12mm;
+      padding-top: 6mm;
+      border-top: 1px solid rgba(160,130,80,.2);
+      font-family: "STKaiti", "KaiTi", serif;
+      font-size: 0.78rem;
+      color: #8a7048;
+      letter-spacing: 0.08em;
+    }
+
+    /* 打印优化 */
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      .sheet {
+        box-shadow: none;
+        width: 100%;
+        min-height: auto;
+        padding: 15mm 12mm;
+      }
+      .nav-bar {
+        display: none;
+      }
+    }
+
+    /* 导航（仅屏幕显示） */
+    .nav-bar {
+      text-align: center;
+      margin-top: 20px;
+      padding: 16px;
+    }
+    .nav-bar button {
+      padding: 10px 28px;
+      background: transparent;
+      border: 1px solid rgba(160,130,80,.4);
+      color: #5a4320;
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+    .nav-bar button:hover {
+      background: rgba(160,130,80,.1);
+    }
+
+    @media (max-width: 600px) {
+      .sheet {
+        width: 100%;
+        padding: 12mm 8mm;
+      }
+      .char-grid {
+        grid-template-columns: repeat(6, 1fr);
+      }
+      .tian-cell .char {
+        font-size: 1.2rem;
+      }
+      .side-label {
+        display: none;
+      }
+      .copybook-area {
+        padding-right: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sheet" id="sheet">
+    <!-- 页眉 -->
+    <div class="sheet-header">
+      <span class="left">《出师表》· 第<span id="postNum">1</span>帖</span>
+      <div class="right">
+        <span>墨香字帖 · 国风练字帖</span>
+        <div class="seal">墨</div>
+      </div>
+    </div>
+
+    <!-- 右侧竖排标签 -->
+    <div class="side-label">
+      <span>楷书练字帖</span>
+      <div class="seal-small">帖</div>
+    </div>
+
+    <!-- 金句标题 -->
+    <div class="quote-title">
+      <h1 id="quoteText">受任于败军之际，奉命于危难之间</h1>
+    </div>
+
+    <!-- 字帖区域 -->
+    <div class="copybook-area">
+      <!-- 示范字 -->
+      <div class="section-row demo-section">
+        <div class="section-label">示范字</div>
+        <div class="grid-wrap">
+          <div class="char-grid" id="demoGrid"></div>
+        </div>
+      </div>
+
+      <!-- 描红字 -->
+      <div class="section-row trace-section">
+        <div class="section-label">描红字</div>
+        <div class="grid-wrap">
+          <div class="char-grid" id="traceGrid"></div>
+        </div>
+      </div>
+
+      <!-- 练习区 -->
+      <div class="section-row practice-section">
+        <div class="section-label">练习区</div>
+        <div class="grid-wrap">
+          <div class="char-grid" id="practiceGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部提示 -->
+    <div class="sheet-footer">
+      <span>书写要点：横平竖直，结构匀称，注意轻重缓急。</span>
+      <span>章法提示：字距均匀，大小一致，整体协调。</span>
+    </div>
+  </div>
+
+  <!-- 导航 -->
+  <div class="nav-bar">
+    <button onclick="nextPost()">下一帖</button>
+  </div>
+
+  <script>
+    const posts = [
+      {
+        num: 1,
+        quote: "受任于败军之际，奉命于危难之间",
+        chars: ["受","任","于","败","军","之","际","，","奉","命","于","危","难","之","间"]
+      },
+      {
+        num: 2,
+        quote: "鞠躬尽瘁，死而后已",
+        chars: ["鞠","躬","尽","瘁","，","死","而","后","已"]
+      },
+      {
+        num: 3,
+        quote: "亲贤臣，远小人",
+        chars: ["亲","贤","臣","，","远","小","人"]
+      },
+      {
+        num: 4,
+        quote: "开张圣听，光先帝遗德",
+        chars: ["开","张","圣","听","，","光","先","帝","遗","德"]
+      },
+      {
+        num: 5,
+        quote: "陟罚臧否，不宜异同",
+        chars: ["陟","罚","臧","否","，","不","宜","异","同"]
+      }
+    ];
+
+    let current = 0;
+
+    function renderGrid(container, chars, isDemo, isTrace) {
+      container.innerHTML = "";
+      // 计算需要的格子数：字符数 + 补满到整行
+      const cols = 9;
+      const rows = Math.ceil(chars.length / cols);
+      const totalCells = rows * cols;
+
+      for (let i = 0; i < totalCells; i++) {
+        const cell = document.createElement("div");
+        cell.className = "tian-cell";
+        if (i < chars.length) {
+          const span = document.createElement("span");
+          span.className = "char";
+          span.textContent = chars[i];
+          cell.appendChild(span);
+        }
+        container.appendChild(cell);
+      }
+    }
+
+    function renderPost() {
+      const post = posts[current];
+      document.getElementById("postNum").textContent = post.num;
+      document.getElementById("quoteText").textContent = post.quote;
+
+      const demoGrid = document.getElementById("demoGrid");
+      const traceGrid = document.getElementById("traceGrid");
+      const practiceGrid = document.getElementById("practiceGrid");
+
+      renderGrid(demoGrid, post.chars, true, false);
+      renderGrid(traceGrid, post.chars, false, true);
+
+      // 练习区：3行 × 9列 = 27格
+      const practiceChars = [];
+      for (let r = 0; r < 3; r++) {
+        for (let c = 0; c < 9; c++) {
+          practiceChars.push("");
+        }
+      }
+      renderGrid(practiceGrid, practiceChars, false, false);
+    }
+
+    function nextPost() {
+      current = (current + 1) % posts.length;
+      renderPost();
+    }
+
+    renderPost();
+  </script>
+</body>
+</html>

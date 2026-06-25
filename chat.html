@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>历史人物互动｜墨香国学AI</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    
+<nav class="topbar">
+  <a class="brand" href="index.html" aria-label="返回首页">
+    <span class="brand-seal">墨</span>
+    <span>
+      <strong>墨香国学AI</strong>
+      <small>Demo V1.0</small>
+    </span>
+  </a>
+  <div class="nav-links" aria-label="主导航">
+    <a href="index.html">首页</a>
+    <a href="article.html">古文学习</a>
+    <a href="teacher.html">AI老师</a>
+    <a href="copybook.html">国风字帖</a>
+    <a href="thinking.html">思辨挑战</a>
+    <a href="chat.html">人物互动</a>
+  </div>
+</nav>
+<section class="growth-panel" aria-label="成长系统">
+  <div class="growth-title">
+    <span>成长系统</span>
+    <strong data-growth-rank>初入草庐</strong>
+  </div>
+  <div class="growth-bar">
+    <div class="growth-item">
+      <span>智慧值</span>
+      <strong data-growth="wisdom">0</strong>
+      <div class="growth-track"><i data-growth-bar="wisdom"></i></div>
+    </div>
+    <div class="growth-item">
+      <span>书法值</span>
+      <strong data-growth="calligraphy">0</strong>
+      <div class="growth-track"><i data-growth-bar="calligraphy"></i></div>
+    </div>
+    <div class="growth-item">
+      <span>思辨值</span>
+      <strong data-growth="thinking">0</strong>
+      <div class="growth-track"><i data-growth-bar="thinking"></i></div>
+    </div>
+  </div>
+</section>
+
+    
+<main class="page-card">
+  <h1 class="page-title">历史决策对话剧场：诸葛亮</h1>
+  <p class="lead">建兴五年，五丈原大营。你掀开帐帘，对面坐着的是五十四岁的蜀汉丞相。</p>
+  <p class="lead" style="opacity:.78;font-size:.95rem;margin-top:6px;">此模块已接入大模型AI实时回应。你所说的每一句话，都将传入丞相耳中。<br>他不是来给你讲道理的。他是来告诉你：当年他是怎么选的，以及——你会怎么选。</p>
+  <div class="chat-layout" style="margin-top: 22px;">
+    <aside class="question-list">
+      <div style="padding:10px 12px;border-bottom:1px solid rgba(160,130,80,.2);margin-bottom:8px;">
+        <span style="font-size:.75rem;color:#8a7048;letter-spacing:.1em;">— 军情急报 · 快速入局 —</span>
+      </div>
+      <button class="question-btn" data-kongming-question="若魏延不服军令但仍能战，你杀还是留？">若魏延不服军令但仍能战，你杀还是留？</button>
+      <button class="question-btn" data-kongming-question="若杨仪掌后勤却不愿配合前线，你如何处理？">若杨仪掌后勤却不愿配合前线，你如何处理？</button>
+      <button class="question-btn" data-kongming-question="若北伐失败在即，是否继续推进？">若北伐失败在即，是否继续推进？</button>
+      <button class="question-btn" data-kongming-question="若陛下召你回朝夺兵权，你奉诏还是抗命？">若陛下召你回朝夺兵权，你奉诏还是抗命？</button>
+      <button class="question-btn" data-kongming-question="若司马懿送女装羞辱逼你出战，你接不接？">若司马懿送女装羞辱逼你出战，你接不接？</button>
+      <button class="question-btn" data-kongming-question="若先帝托孤时说「可自取」，你当真还是当谦？">若先帝托孤时说「可自取」，你当真还是当谦？</button>
+      <div style="padding:10px 12px;border-top:1px solid rgba(160,130,80,.2);margin-top:8px;">
+        <span style="font-size:.75rem;color:#8a7048;letter-spacing:.1em;">— 或直面丞相 —</span>
+      </div>
+    </aside>
+    <section class="chat-box" data-chat="kongming">
+      <div class="messages">
+        <div class="message ai kongming-reply">
+          <div class="km-mood">[ 帐内·烛火微明 ]</div>
+          <p class="km-scene">五丈原的夜风卷着沙尘拍打着帐帘。案上，一封未写完的表文摊开着，墨迹已干。</p>
+          <p class="km-read">你来了。坐。</p>
+          <p class="km-stance">这帐中无外人。你要是问我当年的事，我可以如实说。但你要是想听我教你怎么做人——我教不了你。我这一生，不过是在选与不选之间多撑了几年。</p>
+          <p class="km-close">— 问吧。但问之前想清楚：有些决定，做了就不能回头。</p>
+        </div>
+      </div>
+      <div class="chat-input">
+        <input data-free-input placeholder="你站在帐中，面对丞相，说出你的决断……">
+        <button class="btn" data-free-send>决断</button>
+      </div>
+      <div class="ai-badge">⚡ 实时 · 大模型驱动</div>
+    </section>
+  </div>
+</main>
+
+    <!-- 历史长廊彩蛋（隐藏，互动后触发） -->
+    <div id="history-corridor-trigger" style="display:none;">
+      <div class="corridor-poem">
+        <p>千年长夜，灯火未灭。</p>
+        <p>诸葛亮之外，</p>
+        <p>还有许多人在等待与你对话。</p>
+      </div>
+      <button class="corridor-btn" type="button" onclick="showHistoryCorridor()">进入历史长廊</button>
+    </div>
+
+    <div id="history-corridor" style="display:none;">
+      <div class="corridor-head">
+        <h2>历史长廊</h2>
+        <p>从一篇古文，走进整个中华文明。</p>
+      </div>
+      <div class="corridor-scroll">
+        <div class="corridor-card active">
+          <div class="corridor-avatar">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          </div>
+          <div class="corridor-info">
+            <h3>诸葛亮</h3>
+            <p class="corridor-quote">受任于败军之际，奉命于危难之间。</p>
+            <span class="corridor-status">已开放</span>
+          </div>
+        </div>
+        <div class="corridor-card">
+          <div class="corridor-avatar">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          </div>
+          <div class="corridor-info">
+            <h3>曹刿</h3>
+            <p class="corridor-quote">一鼓作气，再而衰，三而竭。</p>
+            <span class="corridor-status">即将开放</span>
+          </div>
+        </div>
+        <div class="corridor-card">
+          <div class="corridor-avatar">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          </div>
+          <div class="corridor-info">
+            <h3>晏子</h3>
+            <p class="corridor-quote">使于四方，不辱君命。</p>
+            <span class="corridor-status">即将开放</span>
+          </div>
+        </div>
+        <div class="corridor-card">
+          <div class="corridor-avatar">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          </div>
+          <div class="corridor-info">
+            <h3>唐雎</h3>
+            <p class="corridor-quote">士之怒，伏尸二人，流血五步。</p>
+            <span class="corridor-status">即将开放</span>
+          </div>
+        </div>
+        <div class="corridor-card">
+          <div class="corridor-avatar">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          </div>
+          <div class="corridor-info">
+            <h3>邹忌</h3>
+            <p class="corridor-quote">以人为镜，可以明得失。</p>
+            <span class="corridor-status">即将开放</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="footer-tip">墨香国学AI Demo V1.0｜本模块基于大模型AI实时回应 · 历史人物决策模拟与思辨训练系统</p>
+  </div>
+
+  <style>
+    /* 历史长廊彩蛋样式 */
+    #history-corridor-trigger {
+      text-align: center;
+      padding: 40px 20px 20px;
+      animation: corridorFadeIn 2s ease forwards;
+    }
+    .corridor-poem {
+      margin-bottom: 20px;
+      color: #5a4320;
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+      font-size: clamp(1rem, 2vw, 1.35rem);
+      letter-spacing: 0.12em;
+      line-height: 2;
+    }
+    .corridor-poem p {
+      margin: 0;
+    }
+    .corridor-btn {
+      display: inline-block;
+      padding: 12px 36px;
+      background: linear-gradient(180deg, #8f1d24, #6b151a);
+      color: #f5efe6;
+      border: 1px solid #8f1d24;
+      border-radius: 4px;
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .corridor-btn::before,
+    .corridor-btn::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 30px;
+      height: 1px;
+      background: rgba(143,29,36,.3);
+    }
+    .corridor-btn::before {
+      right: calc(100% + 12px);
+    }
+    .corridor-btn::after {
+      left: calc(100% + 12px);
+    }
+    .corridor-btn:hover {
+      background: linear-gradient(180deg, #a52a2a, #7a1a20);
+      transform: translateY(-1px);
+    }
+
+    #history-corridor {
+      padding: 32px 0 16px;
+      animation: corridorFadeIn 1s ease forwards;
+    }
+    .corridor-head {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .corridor-head h2 {
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+      font-size: clamp(1.4rem, 2.6vw, 2rem);
+      color: #1a0e05;
+      letter-spacing: 0.1em;
+      margin: 0 0 8px;
+      font-weight: 500;
+    }
+    .corridor-head p {
+      color: #7a5a2e;
+      font-size: 0.92rem;
+      letter-spacing: 0.06em;
+      margin: 0;
+    }
+    .corridor-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    /* 卷轴展开背景 */
+    .corridor-scroll {
+      position: relative;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 20px 0;
+    }
+    .corridor-scroll::before,
+    .corridor-scroll::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg,
+        transparent,
+        rgba(160,130,80,.35) 10%,
+        rgba(160,130,80,.35) 90%,
+        transparent
+      );
+    }
+    .corridor-scroll::before {
+      top: 0;
+    }
+    .corridor-scroll::after {
+      bottom: 0;
+    }
+    .corridor-card {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 20px 24px;
+      border-bottom: 1px solid rgba(160,130,80,.12);
+      transition: background 0.3s ease;
+      position: relative;
+    }
+    .corridor-card:hover {
+      background: rgba(255,250,240,.4);
+    }
+    .corridor-card:last-child {
+      border-bottom: none;
+    }
+    /* 时间长廊竖线 */
+    .corridor-card::before {
+      content: "";
+      position: absolute;
+      left: 47px;
+      top: 60px;
+      bottom: -20px;
+      width: 1px;
+      background: linear-gradient(180deg, rgba(160,130,80,.2), transparent);
+      z-index: 0;
+    }
+    .corridor-card:last-child::before {
+      display: none;
+    }
+    /* 人物头像 */
+    .corridor-avatar {
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+    .corridor-avatar svg {
+      width: 28px;
+      height: 28px;
+    }
+    /* 诸葛亮：淡金色高亮 */
+    .corridor-card.active .corridor-avatar {
+      background: linear-gradient(135deg, #d4af37, #c9a227);
+      box-shadow: 0 0 0 3px rgba(212,175,55,.15), 0 2px 8px rgba(212,175,55,.25);
+    }
+    .corridor-card.active .corridor-avatar svg {
+      fill: #fff;
+    }
+    /* 其它人物：灰墨色 */
+    .corridor-card:not(.active) .corridor-avatar {
+      background: linear-gradient(135deg, #8a8a8a, #6a6a6a);
+      box-shadow: 0 0 0 3px rgba(100,100,100,.1);
+    }
+    .corridor-card:not(.active) .corridor-avatar svg {
+      fill: rgba(255,255,255,.6);
+    }
+    .corridor-info {
+      flex: 1;
+    }
+    .corridor-info h3 {
+      margin: 0 0 5px;
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+      font-size: 1.08rem;
+      color: #1a0e05;
+      letter-spacing: 0.06em;
+      font-weight: 500;
+    }
+    .corridor-quote {
+      margin: 0 0 8px;
+      color: #6b5438;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+    }
+    .corridor-status {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+    }
+    .corridor-card.active .corridor-status {
+      color: #b8860b;
+      background: rgba(212,175,55,.1);
+      border: 1px solid rgba(212,175,55,.25);
+    }
+    .corridor-card:not(.active) .corridor-status {
+      color: #8a8a8a;
+      background: rgba(120,120,120,.08);
+      border: 1px solid rgba(120,120,120,.15);
+    }
+    @keyframes corridorFadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+  <script>
+    // 历史长廊彩蛋：全局函数
+    window.showHistoryCorridor = function() {
+      document.getElementById('history-corridor-trigger').style.display = 'none';
+      document.getElementById('history-corridor').style.display = 'block';
+      document.getElementById('history-corridor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+  </script>
+  <script src="js/main.js?v=2"></script>
+</body>
+</html>

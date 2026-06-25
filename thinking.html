@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>思辨挑战｜墨香国学AI</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    
+<nav class="topbar">
+  <a class="brand" href="index.html" aria-label="返回首页">
+    <span class="brand-seal">墨</span>
+    <span>
+      <strong>墨香国学AI</strong>
+      <small>Demo V1.0</small>
+    </span>
+  </a>
+  <div class="nav-links" aria-label="主导航">
+    <a href="index.html">首页</a>
+    <a href="article.html">古文学习</a>
+    <a href="teacher.html">AI老师</a>
+    <a href="copybook.html">国风字帖</a>
+    <a href="thinking.html">思辨挑战</a>
+    <a href="chat.html">人物互动</a>
+  </div>
+</nav>
+<section class="growth-panel" aria-label="成长系统">
+  <div class="growth-title">
+    <span>成长系统</span>
+    <strong data-growth-rank>初入草庐</strong>
+  </div>
+  <div class="growth-bar">
+    <div class="growth-item">
+      <span>智慧值</span>
+      <strong data-growth="wisdom">0</strong>
+      <div class="growth-track"><i data-growth-bar="wisdom"></i></div>
+    </div>
+    <div class="growth-item">
+      <span>书法值</span>
+      <strong data-growth="calligraphy">0</strong>
+      <div class="growth-track"><i data-growth-bar="calligraphy"></i></div>
+    </div>
+    <div class="growth-item">
+      <span>思辨值</span>
+      <strong data-growth="thinking">0</strong>
+      <div class="growth-track"><i data-growth-bar="thinking"></i></div>
+    </div>
+  </div>
+</section>
+
+    
+<main class="page-card">
+  <h1 class="page-title">思辨挑战</h1>
+  <p class="lead">主题：如果你是诸葛亮，你会继续北伐吗？请选择你的立场。新版会对选择卡片增加反馈动画，并生成更清晰的 AI 分析。</p>
+  <section class="choice-grid">
+    <button class="choice-card question-btn" data-choice="A">
+      <h3>A：继续北伐，完成先帝遗志</h3>
+      <p>主动出击，延续刘备的理想，也保持蜀汉的斗志。</p>
+    </button>
+    <button class="choice-card question-btn" data-choice="B">
+      <h3>B：休养生息，发展蜀汉国力</h3>
+      <p>先稳定国家，积累粮草和人才，让百姓恢复生活。</p>
+    </button>
+  </section>
+  <section class="analysis-box" data-thinking-result></section>
+</main>
+
+    <p class="footer-tip">墨香国学AI Demo V1.0｜本项目为前端模拟演示，不调用真实 API。</p>
+  </div>
+  <script src="js/main.js?v=2"></script>
+</body>
+</html>

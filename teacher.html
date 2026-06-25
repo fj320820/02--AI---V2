@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI老师｜墨香国学AI</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    
+<nav class="topbar">
+  <a class="brand" href="index.html" aria-label="返回首页">
+    <span class="brand-seal">墨</span>
+    <span>
+      <strong>墨香国学AI</strong>
+      <small>Demo V1.0</small>
+    </span>
+  </a>
+  <div class="nav-links" aria-label="主导航">
+    <a href="index.html">首页</a>
+    <a href="article.html">古文学习</a>
+    <a href="teacher.html">AI老师</a>
+    <a href="copybook.html">国风字帖</a>
+    <a href="thinking.html">思辨挑战</a>
+    <a href="chat.html">人物互动</a>
+  </div>
+</nav>
+<section class="growth-panel" aria-label="成长系统">
+  <div class="growth-title">
+    <span>成长系统</span>
+    <strong data-growth-rank>初入草庐</strong>
+  </div>
+  <div class="growth-bar">
+    <div class="growth-item">
+      <span>智慧值</span>
+      <strong data-growth="wisdom">0</strong>
+      <div class="growth-track"><i data-growth-bar="wisdom"></i></div>
+    </div>
+    <div class="growth-item">
+      <span>书法值</span>
+      <strong data-growth="calligraphy">0</strong>
+      <div class="growth-track"><i data-growth-bar="calligraphy"></i></div>
+    </div>
+    <div class="growth-item">
+      <span>思辨值</span>
+      <strong data-growth="thinking">0</strong>
+      <div class="growth-track"><i data-growth-bar="thinking"></i></div>
+    </div>
+  </div>
+</section>
+
+    
+<main class="page-card">
+  <h1 class="page-title">AI老师</h1>
+  <p class="lead">点击左侧问题，AI老师会用更自然、更适合初中生的语言讲解《出师表》。你也可以在底部输入自己的追问，系统会给出模拟回复。</p>
+  <div class="chat-layout" style="margin-top: 22px;">
+    <aside class="question-list">
+      <button class="question-btn" data-teacher-question="为什么诸葛亮要北伐？">为什么诸葛亮要北伐？</button>
+      <button class="question-btn" data-teacher-question="“亲贤臣，远小人”是什么意思？">“亲贤臣，远小人”是什么意思？</button>
+      <button class="question-btn" data-teacher-question="《出师表》表达了诸葛亮怎样的情感？">《出师表》表达了诸葛亮怎样的情感？</button>
+      <button class="question-btn" data-teacher-question="为什么说《出师表》忠诚感人？">为什么说《出师表》忠诚感人？</button>
+    </aside>
+    <section class="chat-box" data-chat="teacher">
+      <div class="messages">
+        <div class="message ai">你好，我是墨香国学AI老师。你可以点击左侧问题，也可以在下方输入自己的追问。</div>
+      </div>
+      <div class="chat-input">
+        <input data-free-input placeholder="输入一个关于《出师表》的问题，例如：诸葛亮为什么感动？">
+        <button class="btn" data-free-send>发送</button>
+      </div>
+    </section>
+  </div>
+</main>
+
+    <p class="footer-tip">墨香国学AI Demo V2.0｜本模块已接入大模型AI，支持自由提问与智能回答。</p>
+  </div>
+  <script src="js/main.js?v=2"></script>
+</body>
+</html>

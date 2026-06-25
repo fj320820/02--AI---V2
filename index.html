@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>首页｜墨香国学AI</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ===== 首页视觉：典籍里的中国 · 国家宝藏风格 ===== */
+
+    /* 宣纸暖白底色 */
+    body {
+      background:
+        /* 宣纸纹理 */
+        repeating-linear-gradient(90deg, rgba(138,90,19,.03) 0 1px, transparent 1px 48px),
+        repeating-linear-gradient(0deg, rgba(138,90,19,.02) 0 1px, transparent 1px 48px),
+        /* 暖白底色 */
+        linear-gradient(180deg, #f5efe6 0%, #ede4d4 50%, #e8dcc8 100%) !important;
+      color: #3d2c19;
+    }
+    body::before {
+      background-image: none !important;
+      mask-image: none !important;
+    }
+
+    /* 竹影装饰（左右两侧） */
+    .app-shell::before,
+    .app-shell::after {
+      content: "";
+      position: fixed;
+      top: 0;
+      width: 100px;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.12;
+    }
+    .app-shell::before {
+      left: 0;
+      background:
+        linear-gradient(180deg, transparent 50%, rgba(60,40,18,.2) 100%),
+        repeating-linear-gradient(90deg, transparent 0 12px, rgba(60,40,18,.3) 12px 14px, transparent 14px 28px);
+    }
+    .app-shell::after {
+      right: 0;
+      background:
+        linear-gradient(180deg, transparent 40%, rgba(60,40,18,.15) 100%),
+        repeating-linear-gradient(90deg, transparent 0 16px, rgba(60,40,18,.25) 16px 18px, transparent 18px 32px);
+    }
+
+    /* ===== HERO 区域：数字文化展览海报 ===== */
+    .hero {
+      min-height: 78vh;
+      display: grid;
+      grid-template-columns: minmax(0, 0.45fr) minmax(0, 0.55fr);
+      align-items: center;
+      gap: 0;
+      padding: 16px 0 24px;
+      position: relative;
+    }
+
+    /* 左侧内容区：无卡片，直接铺在宣纸上 */
+    .hero-card {
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      padding: clamp(16px, 3vw, 32px) clamp(16px, 3vw, 36px);
+      position: relative;
+      box-shadow: none;
+      z-index: 2;
+    }
+    .hero-card::before,
+    .hero-card::after {
+      display: none;
+    }
+
+    /* 情绪文案 */
+    .hero-epigraph {
+      margin: 0 0 14px;
+      color: #7a5a2e;
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+      font-size: clamp(0.85rem, 1.4vw, 1.1rem);
+      letter-spacing: 0.1em;
+      line-height: 1.8;
+      font-weight: 400;
+    }
+    .hero-epigraph span {
+      display: block;
+    }
+
+    /* 主标题：《出师表》——古籍封面题签感 */
+    .hero-card h1 {
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", "STSong", serif;
+      font-size: clamp(4rem, 9vw, 7.5rem);
+      font-weight: 700;
+      color: #1a0e05;
+      letter-spacing: 0.12em;
+      line-height: 1;
+      margin: 0 0 14px;
+      position: relative;
+    }
+
+    /* 副标题：inline 圆点分隔 */
+    .hero-motto {
+      display: block;
+      margin: 0 0 16px;
+      color: #5a4320;
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+      font-size: clamp(1rem, 2vw, 1.45rem);
+      letter-spacing: 0.12em;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+    .hero-motto span {
+      display: block;
+    }
+    .hero-motto span::before {
+      content: "·";
+      color: #8f1d24;
+      margin-right: 10px;
+      font-weight: 700;
+    }
+
+    /* 说明文字 */
+    .hero-text {
+      color: #8a7048;
+      font-size: 0.88rem;
+      line-height: 1.75;
+      max-width: 28em;
+      margin: 0 0 20px;
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+      letter-spacing: 0.04em;
+    }
+
+    /* 按钮：横向紧凑排列 */
+    .hero-card .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .hero-card .btn {
+      padding: 10px 22px;
+      border-radius: 3px;
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+      transition: all 0.25s ease;
+    }
+    /* 主按钮：朱砂 */
+    .hero-card .btn:first-child {
+      background: #8f1d24;
+      color: #f5efe6;
+      border: 1px solid #8f1d24;
+    }
+    .hero-card .btn:first-child:hover {
+      background: #a52a2a;
+    }
+    /* 次按钮：宣纸白 */
+    .hero-card .btn.secondary {
+      background: rgba(255,250,240,.7);
+      color: #5a4320;
+      border: 1px solid rgba(160,130,80,.4);
+    }
+    .hero-card .btn.secondary:hover {
+      background: rgba(255,250,240,.95);
+      border-color: rgba(160,130,80,.6);
+    }
+
+    /* ===== 右侧主视觉：卷轴装裱 ===== */
+    .hero-visual {
+      position: relative;
+      min-height: 560px;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      padding: 0;
+      overflow: visible;
+      margin-left: -20px;
+    }
+    /* 卷轴外框 */
+    .hero-visual::before {
+      content: "";
+      position: absolute;
+      inset: -8px -12px -8px -12px;
+      border: 1px solid rgba(160,130,80,.25);
+      border-radius: 4px;
+      background:
+        /* 卷轴轴头（上下） */
+        linear-gradient(180deg,
+          rgba(120,80,40,.18) 0 8px,
+          transparent 8px calc(100% - 8px),
+          rgba(120,80,40,.18) calc(100% - 8px) 100%
+        ),
+        linear-gradient(135deg, rgba(250,244,234,.95), rgba(240,232,218,.9));
+      pointer-events: none;
+      z-index: 0;
+      box-shadow:
+        0 2px 16px rgba(60,40,18,.1),
+        inset 0 0 0 1px rgba(255,255,255,.4);
+    }
+    /* 古籍页面容器 */
+    .hero-visual .page-illustration {
+      position: relative;
+      width: 100%;
+      min-height: 520px;
+      z-index: 1;
+      /* 古籍页面底色 */
+      background: linear-gradient(135deg, #f8f2e8, #f0e8d8);
+      /* 页面内边距：形成古籍页边 */
+      padding: 24px 20px 28px 28px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    /* 古籍页边线 */
+    .hero-visual .page-illustration::before {
+      content: "";
+      position: absolute;
+      inset: 10px 14px 16px 18px;
+      border: 1px solid rgba(160,130,80,.15);
+      pointer-events: none;
+      z-index: 2;
+    }
+    /* 插画层 */
+    .hero-visual .page-illustration .illus-wrap {
+      position: relative;
+      flex: 1;
+      min-height: 380px;
+      overflow: hidden;
+    }
+    .hero-visual .page-illustration .illus-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      display: block;
+    }
+
+
+    /* 成长面板：宣纸风格 */
+    .growth-panel {
+      background:
+        linear-gradient(135deg, rgba(255,250,240,.9), rgba(246,238,224,.85));
+      border: 1px solid rgba(160,130,80,.25);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(60,40,18,.08);
+    }
+    .growth-title span {
+      color: #5a4320;
+    }
+    .growth-title strong {
+      color: #8f1d24;
+    }
+    .growth-item span {
+      color: #7a5a2e;
+    }
+    .growth-item strong {
+      color: #3d2c19;
+    }
+    .growth-track {
+      background: rgba(160,130,80,.15);
+    }
+    .growth-track i {
+      background: linear-gradient(90deg, #d8b56c, #f0d58e);
+    }
+
+    /* 导航栏：宣纸风格 */
+    .topbar {
+      background: rgba(255,250,240,.92);
+      border-color: rgba(160,130,80,.25);
+      backdrop-filter: blur(16px);
+    }
+    .topbar .brand strong {
+      color: #1a0e05;
+    }
+    .topbar .brand small {
+      color: #7a5a2e;
+    }
+    .nav-links a {
+      color: #6b5438;
+    }
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: #1a0e05;
+      background: rgba(160,130,80,.12);
+    }
+
+    /* 视频导学区 */
+    .video-guide {
+      background:
+        linear-gradient(135deg, rgba(255,250,240,.9), rgba(246,238,224,.85));
+      border-color: rgba(160,130,80,.25);
+    }
+    .video-guide h2 {
+      color: #1a0e05;
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+    }
+    .video-guide p {
+      color: #6b5438;
+    }
+
+    /* ===== 学习旅程 ===== */
+    .journey {
+      padding: 56px 0 28px;
+    }
+    .journey-head {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .journey-head h2 {
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+      font-size: clamp(1.45rem, 2.8vw, 2.2rem);
+      color: #1a0e05;
+      letter-spacing: 0.08em;
+      margin: 0 0 12px;
+      font-weight: 500;
+    }
+    .journey-head p {
+      color: #7a5a2e;
+      font-size: 0.95rem;
+      letter-spacing: 0.06em;
+      margin: 0;
+    }
+    .journey-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 16px;
+    }
+    .journey-card {
+      display: flex;
+      flex-direction: column;
+      padding: 0 0 22px;
+      border: 1px solid rgba(160,130,80,.2);
+      border-radius: 12px;
+      background: rgba(255,250,240,.6);
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.25s ease, border-color 0.25s ease;
+      overflow: hidden;
+    }
+    .journey-card:hover {
+      background: rgba(255,250,240,.85);
+      border-color: rgba(160,130,80,.4);
+    }
+    .journey-card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      border-bottom: 1px solid rgba(160,130,80,.15);
+      filter: saturate(0.9) contrast(0.95);
+    }
+    .journey-step {
+      display: inline-block;
+      margin: 16px 22px 8px;
+      padding: 2px 10px;
+      border: 1px solid rgba(143,29,36,.25);
+      border-radius: 999px;
+      color: #8f1d24;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      background: rgba(143,29,36,.06);
+      align-self: flex-start;
+    }
+    .journey-card h3 {
+      margin: 0 22px 6px;
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+      font-size: 1.1rem;
+      color: #1a0e05;
+      letter-spacing: 0.04em;
+      font-weight: 500;
+    }
+    .journey-card p {
+      margin: 0 22px 12px;
+      color: #7a5a2e;
+      font-size: 0.85rem;
+      line-height: 1.65;
+      flex: 1;
+    }
+    .journey-enter {
+      margin: 0 22px;
+      color: #8a7048;
+      font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      transition: color 0.25s ease;
+    }
+    .journey-card:hover .journey-enter {
+      color: #8f1d24;
+    }
+
+    /* ===== 创作理念（博物馆展板） ===== */
+    .philosophy {
+      padding: 40px 0 24px;
+    }
+    .philosophy-head {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .philosophy-head h2 {
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+      font-size: clamp(1.3rem, 2.4vw, 1.8rem);
+      color: #1a0e05;
+      letter-spacing: 0.1em;
+      margin: 0;
+      font-weight: 500;
+    }
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    .philosophy-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 22px 28px;
+      border: 1px solid rgba(160,130,80,.22);
+      border-radius: 10px;
+      background: rgba(255,250,240,.55);
+      min-height: 120px;
+      max-height: 160px;
+    }
+    .philosophy-card h3 {
+      margin: 0 0 10px;
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+      font-size: 1.05rem;
+      color: #1a0e05;
+      letter-spacing: 0.04em;
+      font-weight: 500;
+    }
+    .philosophy-card p {
+      margin: 0;
+      color: #6b5438;
+      font-size: 0.88rem;
+      line-height: 1.7;
+    }
+
+    /* 片尾题字：千年之后 */
+    .closing-words {
+      text-align: center;
+      padding: 64px 20px 60px;
+      position: relative;
+    }
+    .closing-words p {
+      margin: 0;
+      color: #2a1a0c;
+      font-family: "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", serif;
+      font-size: clamp(1.35rem, 2.8vw, 1.9rem);
+      letter-spacing: 0.18em;
+      line-height: 2;
+      font-weight: 400;
+    }
+    .closing-words p span {
+      display: block;
+    }
+
+    /* footer */
+    .footer-tip {
+      text-align: center;
+      padding: 8px 0 32px;
+      color: rgba(107,84,56,.4);
+      font-size: 0.82rem;
+      letter-spacing: 0.06em;
+    }
+
+    @media (max-width: 720px) {
+      .philosophy-grid {
+        grid-template-columns: 1fr;
+      }
+      .philosophy-card {
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 960px) {
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+      .hero-visual {
+        min-height: auto;
+        order: -1;
+        padding: 0 12px;
+        margin-left: 0;
+      }
+      .hero-visual .page-illustration {
+        min-height: 360px;
+        padding: 18px 16px 24px 18px;
+      }
+      .hero-visual .page-illustration::before {
+        inset: 8px 10px 14px 12px;
+      }
+      .hero-visual .page-illustration .illus-wrap {
+        min-height: 260px;
+      }
+      .hero-visual .page-illustration .illus-wrap img {
+        max-height: 40vh;
+      }
+
+      .app-shell::before,
+      .app-shell::after {
+        width: 50px;
+      }
+      .journey-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      }
+    }
+    @media (max-width: 720px) {
+      .hero-card h1 {
+        font-size: clamp(2.8rem, 12vw, 4rem);
+      }
+      .hero-epigraph {
+        font-size: 0.88rem;
+      }
+      .journey-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+
+<nav class="topbar">
+  <a class="brand" href="index.html" aria-label="返回首页">
+    <span class="brand-seal">墨</span>
+    <span>
+      <strong>墨香国学AI</strong>
+      <small>Demo V1.0</small>
+    </span>
+  </a>
+  <div class="nav-links" aria-label="主导航">
+    <a href="index.html" class="active">首页</a>
+    <a href="article.html">古文学习</a>
+    <a href="teacher.html">AI老师</a>
+    <a href="copybook.html">国风字帖</a>
+    <a href="thinking.html">思辨挑战</a>
+    <a href="chat.html">人物互动</a>
+  </div>
+</nav>
+<section class="growth-panel" aria-label="成长系统">
+  <div class="growth-title">
+    <span>成长系统</span>
+    <strong data-growth-rank>初入草庐</strong>
+  </div>
+  <div class="growth-bar">
+    <div class="growth-item">
+      <span>智慧值</span>
+      <strong data-growth="wisdom">0</strong>
+      <div class="growth-track"><i data-growth-bar="wisdom"></i></div>
+    </div>
+    <div class="growth-item">
+      <span>书法值</span>
+      <strong data-growth="calligraphy">0</strong>
+      <div class="growth-track"><i data-growth-bar="calligraphy"></i></div>
+    </div>
+    <div class="growth-item">
+      <span>思辨值</span>
+      <strong data-growth="thinking">0</strong>
+      <div class="growth-track"><i data-growth-bar="thinking"></i></div>
+    </div>
+  </div>
+</section>
+
+<header class="hero">
+  <section class="hero-card">
+    <!-- 情绪文案 -->
+    <div class="hero-epigraph">
+      <span>受任于败军之际</span>
+      <span>奉命于危难之间</span>
+    </div>
+    <!-- 主标题 -->
+    <h1>出师表</h1>
+    <!-- 副标题 -->
+    <p class="hero-motto">
+      <span>一篇表文</span>
+      <span>一生忠诚</span>
+      <span>一场跨越千年的对话</span>
+    </p>
+    <!-- 说明 -->
+    <p class="hero-text">
+      从《出师表》出发，读古文，见古人，明今日。
+    </p>
+    <!-- 按钮 -->
+    <div class="action-row">
+      <a class="btn" href="article.html">开始阅读</a>
+      <a class="btn secondary" href="copybook.html">进入字帖</a>
+      <a class="btn secondary" href="chat.html">与诸葛亮对话</a>
+    </div>
+  </section>
+  <section class="hero-visual" aria-label="出师表">
+    <div class="page-illustration">
+      <div class="illus-wrap">
+        <img src="images/chushibiao-cover.png" alt="水墨诸葛亮背影与《出师表》竹简" loading="eager">
+      </div>
+    </div>
+  </section>
+</header>
+
+<section class="video-guide" aria-label="AI视频导学">
+  <div class="video-guide-head">
+    <div>
+      <h2>AI视频导学</h2>
+      <p>理解《出师表》的历史背景与责任精神</p>
+    </div>
+    <span class="video-guide-tag">HTML5 Video</span>
+  </div>
+  <div class="video-card">
+    <video id="guideVideo" controls preload="metadata" playsinline>
+      <source src="chushibiao.mp4" type="video/mp4">
+      当前浏览器不支持 HTML5 video 标签，请更换浏览器后重试。
+    </video>
+    <button id="playVideoBtn" type="button" style="position:absolute;inset:0;width:100%;height:100%;background:rgba(0,0,0,.5);color:#fff;border:none;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;">
+      <span>▶</span> 点击播放视频
+    </button>
+  </div>
+  <script>
+    (function() {
+      var video = document.getElementById('guideVideo');
+      var btn = document.getElementById('playVideoBtn');
+      if (video && btn) {
+        btn.addEventListener('click', function() {
+          video.play();
+          btn.style.display = 'none';
+        });
+        video.addEventListener('play', function() {
+          btn.style.display = 'none';
+        });
+      }
+    })();
+  </script>
+</section>
+
+<section class="journey" aria-label="学习旅程">
+  <div class="journey-head">
+    <h2>开始你的《出师表》之旅</h2>
+    <p>从阅读经典，到理解责任；从书写名句，到与诸葛亮对话</p>
+  </div>
+  <div class="journey-grid">
+    <a class="journey-card" href="article.html">
+      <img src="images/journey-01.jpg" alt="竹简与毛笔" loading="lazy">
+      <span class="journey-step">第一站</span>
+      <h3>走进《出师表》</h3>
+      <p>阅读原文、译文与历史背景，理解诸葛亮的北伐时代</p>
+      <span class="journey-enter">进入 →</span>
+    </a>
+    <a class="journey-card" href="teacher.html">
+      <img src="images/journey-02.jpg" alt="诸葛亮与竹简" loading="lazy">
+      <span class="journey-step">第二站</span>
+      <h3>请教诸葛亮</h3>
+      <p>向丞相提问，体验历史人物视角下的思考</p>
+      <span class="journey-enter">进入 →</span>
+    </a>
+    <a class="journey-card" href="copybook.html">
+      <img src="images/journey-03.jpg" alt="毛笔书写" loading="lazy">
+      <span class="journey-step">第三站</span>
+      <h3>书写经典</h3>
+      <p>描红经典名句，体验书法中的宁静与力量</p>
+      <span class="journey-enter">进入 →</span>
+    </a>
+    <a class="journey-card" href="thinking.html">
+      <img src="images/journey-04.jpg" alt="棋盘与山水" loading="lazy">
+      <span class="journey-step">第四站</span>
+      <h3>思辨抉择</h3>
+      <p>面对历史选择题，思考责任、理想与坚持</p>
+      <span class="journey-enter">进入 →</span>
+    </a>
+    <a class="journey-card" href="chat.html">
+      <img src="images/journey-05.jpg" alt="牌坊与竹林" loading="lazy">
+      <span class="journey-step">第五站</span>
+      <h3>跨越千年</h3>
+      <p>与诸葛亮展开一场跨越时空的对话</p>
+      <span class="journey-enter">进入 →</span>
+    </a>
+  </div>
+</section>
+
+<section class="philosophy" aria-label="创作理念">
+  <div class="philosophy-head">
+    <h2>创作理念</h2>
+  </div>
+  <div class="philosophy-grid">
+    <div class="philosophy-card">
+      <h3>为什么选择《出师表》</h3>
+      <p>《出师表》不仅是一篇古文，更是一位历史人物在国家危亡之际留下的精神答卷。我们希望通过数字化方式，让学生不只是背诵课文，而是真正走进诸葛亮的内心世界。</p>
+    </div>
+    <div class="philosophy-card">
+      <h3>让经典真正活起来</h3>
+      <p>本作品融合AI讲解、视频导学、国风字帖与历史人物互动。让学生从阅读者变成参与者，从知识接受者变成主动思考者。</p>
+    </div>
+  </div>
+</section>
+
+<div class="closing-words" aria-label="片尾题字">
+  <p>
+    <span>千年之后</span>
+    <span>我们依然在向诸葛亮提问</span>
+  </p>
+</div>
+
+    <p class="footer-tip">《出师表》学习体验作品</p>
+  </div>
+  <script src="js/main.js?v=2"></script>
+</body>
+</html>
